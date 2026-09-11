@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Spin the Decades — Music Bingo Cards</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bungee&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F2E8D8;
+    --card:#FBF6EC;
+    --ink:#241C14;
+    --ink-soft:#5b4f3f;
+    --gold:#C98A1F;
+    --line:#d9cba9;
+    --d50:#B23A2E;
+    --d60:#C98A1F;
+    --d70:#47795A;
+    --d80:#6A4C93;
+    --d90:#2E6E8E;
+    --d00:#B23368;
+    --dtv:#5B5F97;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Space Grotesk',sans-serif;
+    -webkit-print-color-adjust:exact;
+    print-color-adjust:exact;
+  }
+
+  /* ---------- on-screen controls ---------- */
+  .controls{
+    max-width:900px;
+    margin:0 auto;
+    padding:32px 24px 8px;
+    text-align:center;
+  }
+  .controls h1{
+    font-family:'Bungee',cursive;
+    font-size:clamp(28px,5vw,44px);
+    letter-spacing:.5px;
+    margin:0 0 6px;
+    line-height:1.15;
+  }
+  .controls h1 span{color:var(--gold);}
+  .controls p.sub{
+    color:var(--ink-soft);
+    margin:0 0 22px;
+    font-size:15px;
+  }
+  .bar{
+    display:flex;
+    flex-wrap:wrap;
+    gap:12px;
+    justify-content:center;
+    align-items:center;
+    margin-bottom:20px;
+  }
+  .bar label{
+    font-size:13px;
+    font-weight:600;
+    display:flex;
+    align-items:center;
+    gap:8px;
+    background:var(--card);
+    border:1px solid var(--line);
+    padding:8px 14px;
+    border-radius:999px;
+  }
+  .bar label.checkbox{cursor:pointer;}
+  .bar input[type=checkbox]{
+    width:15px;height:15px;
+    accent-color:var(--ink);
+    cursor:pointer;
+  }
+  .bar input[type=number]{
+    width:56px;
+    border:none;
+    background:transparent;
+    font-family:'JetBrains Mono',monospace;
+    font-weight:700;
+    font-size:14px;
+    color:var(--ink);
+  }
+  .bar button{
+    font-family:'Space Grotesk',sans-serif;
+    font-weight:700;
+    font-size:14px;
+    border:none;
+    border-radius:999px;
+    padding:10px 22px;
+    cursor:pointer;
+    transition:transform .12s ease;
+  }
+  .bar button:active{transform:scale(.96);}
+  .btn-primary{background:var(--ink);color:var(--paper);}
+  .btn-secondary{background:transparent;color:var(--ink);border:1.5px solid var(--ink)!important;}
+  .legend{
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:center;
+    gap:10px;
+    margin-bottom:28px;
+  }
+  .legend span{
+    font-size:11px;
+    font-weight:700;
+    text-transform:uppercase;
+    letter-spacing:.06em;
+    padding:5px 10px;
+    border-radius:6px;
+    color:#fff;
+  }
+
+  /* ---------- print sheet layout: 1 card per US-Letter page ---------- */
+  .sheet{
+    width:816px;
+    min-height:1056px;
+    margin:0 auto 28px;
+    padding:50px 56px;
+    background:var(--card);
+    box-shadow:0 1px 3px rgba(0,0,0,.15);
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+  }
+
+  .card{
+    border:3px solid var(--ink);
+    border-radius:20px;
+    padding:32px 36px 34px;
+    position:relative;
+    background:
+      radial-gradient(circle at 100% 0%, rgba(201,138,31,.08), transparent 45%),
+      var(--card);
+  }
+  .card::before, .card::after{
+    content:"";
+    position:absolute;
+    top:-11px; width:20px; height:20px;
+    border-radius:50%;
+    background:var(--paper);
+    border:2.5px solid var(--ink);
+  }
+  .card::before{left:38px;}
+  .card::after{right:38px;}
+
+  .card-head{
+    display:flex;
+    align-items:flex-end;
+    justify-content:space-between;
+    margin-bottom:22px;
+    border-bottom:2.5px dashed var(--line);
+    padding-bottom:16px;
+  }
+  .card-head h2{
+    font-family:'Bungee',cursive;
+    font-size:36px;
+    margin:0;
+    letter-spacing:.3px;
+  }
+  .card-head h2 span{color:var(--gold);}
+  .card-head .meta{
+    text-align:right;
+    font-family:'JetBrains Mono',monospace;
+    font-size:13px;
+    color:var(--ink-soft);
+    line-height:1.5;
+  }
+  .card-head .meta b{color:var(--ink);font-size:16px;}
+
+  .grid{
+    display:grid;
+    grid-template-columns:repeat(5,1fr);
+    grid-template-rows:repeat(5,1fr);
+    gap:10px;
+  }
+  .cell{
+    border:1.5px solid var(--line);
+    border-radius:10px;
+    min-height:130px;
+    padding:10px 8px;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    text-align:center;
+    background:#fff;
+    position:relative;
+  }
+  .cell .title{
+    font-weight:700;
+    font-size:14.5px;
+    line-height:1.28;
+  }
+  .cell .artist{
+    font-size:11.5px;
+    color:var(--ink-soft);
+    margin-top:5px;
+    line-height:1.25;
+  }
+  .cell .yr{
+    position:absolute;
+    top:5px; right:7px;
+    font-family:'JetBrains Mono',monospace;
+    font-size:10px;
+    color:var(--ink-soft);
+    opacity:.7;
+  }
+  .cell .dot{
+    position:absolute;
+    top:6px; left:7px;
+    width:8px; height:8px;
+    border-radius:50%;
+  }
+  .cell.free{
+    background:var(--ink);
+    color:var(--paper);
+  }
+  .cell.free .vinyl{width:46px;height:46px;margin-bottom:6px;}
+  .cell.free .title{
+    font-family:'Bungee',cursive;
+    font-size:15px;
+    letter-spacing:.5px;
+    color:var(--gold);
+  }
+
+  .card-foot{
+    margin-top:20px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    font-size:12.5px;
+    color:var(--ink-soft);
+    font-family:'JetBrains Mono',monospace;
+  }
+
+  .d50{background:var(--d50);} .d60{background:var(--d60);} .d70{background:var(--d70);}
+  .d80{background:var(--d80);} .d90{background:var(--d90);} .d00{background:var(--d00);} .dtv{background:var(--dtv);}
+
+  @media print{
+    .controls{display:none;}
+    body{background:#fff;}
+    .sheet{
+      box-shadow:none;
+      margin:0;
+      width:auto;
+      min-height:auto;
+      page-break-after:always;
+    }
+  }
+  @media screen and (max-width:880px){
+    .sheet{width:100%;padding:20px;}
+  }
+</style>
+</head>
+<body>
+
+  <div class="controls">
+    <h1>Spin the Decades <span>Music Bingo</span></h1>
+    <p class="sub">5×5 cards pulling from 294 hits spanning the 1950s&ndash;2000s across rock, pop, R&amp;B, hip-hop, country, disco, alternative, and TV &amp; movie themes. Generate a fresh batch, then print — one card per sheet.</p>
+    <div class="bar">
+      <button class="btn-secondary" onclick="goHome()">🏠 Home</button>
+      <label>How many cards
+        <input type="number" id="cardCount" value="30" min="1" max="200">
+      </label>
+      <label class="checkbox">
+        <input type="checkbox" id="doubleSided" onchange="renderAll()">
+        Double-sided (pair card 1 &amp; 2 back-to-back, 3 &amp; 4, etc.)
+      </label>
+      <button class="btn-primary" onclick="renderAll()">Shuffle &amp; Generate</button>
+      <button class="btn-secondary" onclick="window.print()">Print</button>
+    </div>
+    <div class="legend">
+      <span class="d50">50s</span><span class="d60">60s</span><span class="d70">70s</span>
+      <span class="d80">80s</span><span class="d90">90s</span><span class="d00">2000s</span>
+    </div>
+    <p class="sub" style="margin-top:-16px;font-size:12.5px;">Double-sided keeps cards in order so each sheet's front and back are two different cards — turn on "print on both sides" (long-edge) in your printer dialog too. With an odd number of cards, the last one prints alone on a front side.</p>
+  </div>
+
+  <div id="sheets"></div>
+
+<script>
+const SONGS = [{"t": "Rock Around the Clock", "a": "Bill Haley & His Comets", "y": 1954, "d": "50s", "g": "Rock"}, {"t": "Tutti Frutti", "a": "Little Richard", "y": 1955, "d": "50s", "g": "Rock"}, {"t": "Blue Suede Shoes", "a": "Carl Perkins", "y": 1955, "d": "50s", "g": "Rock"}, {"t": "Only You (And You Alone)", "a": "The Platters", "y": 1955, "d": "50s", "g": "R&B/Soul"}, {"t": "The Great Pretender", "a": "The Platters", "y": 1955, "d": "50s", "g": "R&B/Soul"}, {"t": "Ain't That a Shame", "a": "Fats Domino", "y": 1955, "d": "50s", "g": "Rock"}, {"t": "Sixteen Tons", "a": "Tennessee Ernie Ford", "y": 1955, "d": "50s", "g": "Country"}, {"t": "Hound Dog", "a": "Elvis Presley", "y": 1956, "d": "50s", "g": "Rock"}, {"t": "Why Do Fools Fall in Love", "a": "Frankie Lymon & the Teenagers", "y": 1956, "d": "50s", "g": "R&B/Soul"}, {"t": "See You Later, Alligator", "a": "Bill Haley & His Comets", "y": 1956, "d": "50s", "g": "Rock"}, {"t": "Long Tall Sally", "a": "Little Richard", "y": 1956, "d": "50s", "g": "Rock"}, {"t": "I Walk the Line", "a": "Johnny Cash", "y": 1956, "d": "50s", "g": "Country"}, {"t": "That'll Be the Day", "a": "Buddy Holly", "y": 1957, "d": "50s", "g": "Rock"}, {"t": "Great Balls of Fire", "a": "Jerry Lee Lewis", "y": 1957, "d": "50s", "g": "Rock"}, {"t": "At the Hop", "a": "Danny & The Juniors", "y": 1957, "d": "50s", "g": "Rock"}, {"t": "Jailhouse Rock", "a": "Elvis Presley", "y": 1957, "d": "50s", "g": "Rock"}, {"t": "All Shook Up", "a": "Elvis Presley", "y": 1957, "d": "50s", "g": "Rock"}, {"t": "Peggy Sue", "a": "Buddy Holly", "y": 1957, "d": "50s", "g": "Rock"}, {"t": "Wake Up Little Susie", "a": "The Everly Brothers", "y": 1957, "d": "50s", "g": "Rock"}, {"t": "Bye Bye Love", "a": "The Everly Brothers", "y": 1957, "d": "50s", "g": "Rock"}, {"t": "Diana", "a": "Paul Anka", "y": 1957, "d": "50s", "g": "Pop"}, {"t": "Whole Lotta Shakin' Goin' On", "a": "Jerry Lee Lewis", "y": 1957, "d": "50s", "g": "Rock"}, {"t": "Walkin' After Midnight", "a": "Patsy Cline", "y": 1957, "d": "50s", "g": "Country"}, {"t": "Johnny B. Goode", "a": "Chuck Berry", "y": 1958, "d": "50s", "g": "Rock"}, {"t": "La Bamba", "a": "Ritchie Valens", "y": 1958, "d": "50s", "g": "Rock"}, {"t": "Sixteen Candles", "a": "The Crests", "y": 1958, "d": "50s", "g": "R&B/Soul"}, {"t": "Yakety Yak", "a": "The Coasters", "y": 1958, "d": "50s", "g": "R&B/Soul"}, {"t": "Get a Job", "a": "The Silhouettes", "y": 1958, "d": "50s", "g": "R&B/Soul"}, {"t": "Splish Splash", "a": "Bobby Darin", "y": 1958, "d": "50s", "g": "Pop"}, {"t": "Volare (Nel Blu Dipinto Di Blu)", "a": "Domenico Modugno", "y": 1958, "d": "50s", "g": "Pop"}, {"t": "Tom Dooley", "a": "The Kingston Trio", "y": 1958, "d": "50s", "g": "Rock"}, {"t": "It's All in the Game", "a": "Tommy Edwards", "y": 1958, "d": "50s", "g": "Pop"}, {"t": "Mack the Knife", "a": "Bobby Darin", "y": 1959, "d": "50s", "g": "Pop"}, {"t": "Venus", "a": "Frankie Avalon", "y": 1959, "d": "50s", "g": "Pop"}, {"t": "Stagger Lee", "a": "Lloyd Price", "y": 1959, "d": "50s", "g": "R&B/Soul"}, {"t": "The Battle of New Orleans", "a": "Johnny Horton", "y": 1959, "d": "50s", "g": "Country"}, {"t": "Lonely Boy", "a": "Paul Anka", "y": 1959, "d": "50s", "g": "Pop"}, {"t": "Kansas City", "a": "Wilbert Harrison", "y": 1959, "d": "50s", "g": "R&B/Soul"}, {"t": "Come Softly to Me", "a": "The Fleetwoods", "y": 1959, "d": "50s", "g": "Pop"}, {"t": "Charlie Brown", "a": "The Coasters", "y": 1959, "d": "50s", "g": "R&B/Soul"}, {"t": "Personality", "a": "Lloyd Price", "y": 1959, "d": "50s", "g": "R&B/Soul"}, {"t": "The Twist", "a": "Chubby Checker", "y": 1960, "d": "60s", "g": "Pop"}, {"t": "Stand By Me", "a": "Ben E. King", "y": 1961, "d": "60s", "g": "R&B/Soul"}, {"t": "Runaround Sue", "a": "Dion", "y": 1961, "d": "60s", "g": "Rock"}, {"t": "Blue Moon", "a": "The Marcels", "y": 1961, "d": "60s", "g": "R&B/Soul"}, {"t": "Crazy", "a": "Patsy Cline", "y": 1961, "d": "60s", "g": "Country"}, {"t": "The Loco-Motion", "a": "Little Eva", "y": 1962, "d": "60s", "g": "R&B/Soul"}, {"t": "Sherry", "a": "The Four Seasons", "y": 1962, "d": "60s", "g": "Pop"}, {"t": "Big Girls Don't Cry", "a": "The Four Seasons", "y": 1962, "d": "60s", "g": "Pop"}, {"t": "James Bond Theme", "a": "Monty Norman", "y": 1962, "d": "60s", "g": "TV & Movie Themes"}, {"t": "Twist and Shout", "a": "The Beatles", "y": 1963, "d": "60s", "g": "Rock"}, {"t": "I Want to Hold Your Hand", "a": "The Beatles", "y": 1963, "d": "60s", "g": "Rock"}, {"t": "Da Doo Ron Ron", "a": "The Crystals", "y": 1963, "d": "60s", "g": "R&B/Soul"}, {"t": "Surfin' U.S.A.", "a": "The Beach Boys", "y": 1963, "d": "60s", "g": "Rock"}, {"t": "He's So Fine", "a": "The Chiffons", "y": 1963, "d": "60s", "g": "R&B/Soul"}, {"t": "Louie Louie", "a": "The Kingsmen", "y": 1963, "d": "60s", "g": "Rock"}, {"t": "The Pink Panther Theme", "a": "Henry Mancini", "y": 1963, "d": "60s", "g": "TV & Movie Themes"}, {"t": "Ring of Fire", "a": "Johnny Cash", "y": 1963, "d": "60s", "g": "Country"}, {"t": "Dancing in the Street", "a": "Martha and the Vandellas", "y": 1964, "d": "60s", "g": "R&B/Soul"}, {"t": "My Girl", "a": "The Temptations", "y": 1964, "d": "60s", "g": "R&B/Soul"}, {"t": "Under the Boardwalk", "a": "The Drifters", "y": 1964, "d": "60s", "g": "R&B/Soul"}, {"t": "She Loves You", "a": "The Beatles", "y": 1964, "d": "60s", "g": "Rock"}, {"t": "Can't Buy Me Love", "a": "The Beatles", "y": 1964, "d": "60s", "g": "Rock"}, {"t": "Oh, Pretty Woman", "a": "Roy Orbison", "y": 1964, "d": "60s", "g": "Rock"}, {"t": "House of the Rising Sun", "a": "The Animals", "y": 1964, "d": "60s", "g": "Rock"}, {"t": "You Really Got Me", "a": "The Kinks", "y": 1964, "d": "60s", "g": "Rock"}, {"t": "California Dreamin'", "a": "The Mamas & the Papas", "y": 1965, "d": "60s", "g": "Rock"}, {"t": "(I Can't Get No) Satisfaction", "a": "The Rolling Stones", "y": 1965, "d": "60s", "g": "Rock"}, {"t": "My Generation", "a": "The Who", "y": 1965, "d": "60s", "g": "Rock"}, {"t": "Help!", "a": "The Beatles", "y": 1965, "d": "60s", "g": "Rock"}, {"t": "Mr. Tambourine Man", "a": "The Byrds", "y": 1965, "d": "60s", "g": "Rock"}, {"t": "I Got You (I Feel Good)", "a": "James Brown", "y": 1965, "d": "60s", "g": "R&B/Soul"}, {"t": "Wooly Bully", "a": "Sam the Sham & the Pharaohs", "y": 1965, "d": "60s", "g": "Rock"}, {"t": "Unchained Melody", "a": "The Righteous Brothers", "y": 1965, "d": "60s", "g": "TV & Movie Themes"}, {"t": "Good Vibrations", "a": "The Beach Boys", "y": 1966, "d": "60s", "g": "Rock"}, {"t": "These Boots Are Made for Walkin'", "a": "Nancy Sinatra", "y": 1966, "d": "60s", "g": "Pop"}, {"t": "Wild Thing", "a": "The Troggs", "y": 1966, "d": "60s", "g": "Rock"}, {"t": "Reach Out I'll Be There", "a": "The Four Tops", "y": 1966, "d": "60s", "g": "R&B/Soul"}, {"t": "Paint It Black", "a": "The Rolling Stones", "y": 1966, "d": "60s", "g": "Rock"}, {"t": "Theme from Mission: Impossible", "a": "Lalo Schifrin", "y": 1966, "d": "60s", "g": "TV & Movie Themes"}, {"t": "Respect", "a": "Aretha Franklin", "y": 1967, "d": "60s", "g": "R&B/Soul"}, {"t": "Light My Fire", "a": "The Doors", "y": 1967, "d": "60s", "g": "Rock"}, {"t": "Somebody to Love", "a": "Jefferson Airplane", "y": 1967, "d": "60s", "g": "Rock"}, {"t": "All You Need Is Love", "a": "The Beatles", "y": 1967, "d": "60s", "g": "Rock"}, {"t": "White Rabbit", "a": "Jefferson Airplane", "y": 1967, "d": "60s", "g": "Rock"}, {"t": "(Sittin' On) The Dock of the Bay", "a": "Otis Redding", "y": 1968, "d": "60s", "g": "R&B/Soul"}, {"t": "I Heard It Through the Grapevine", "a": "Marvin Gaye", "y": 1968, "d": "60s", "g": "R&B/Soul"}, {"t": "Hey Jude", "a": "The Beatles", "y": 1968, "d": "60s", "g": "Rock"}, {"t": "Wichita Lineman", "a": "Glen Campbell", "y": 1968, "d": "60s", "g": "Country"}, {"t": "Stand By Your Man", "a": "Tammy Wynette", "y": 1968, "d": "60s", "g": "Country"}, {"t": "Suspicious Minds", "a": "Elvis Presley", "y": 1969, "d": "60s", "g": "Rock"}, {"t": "Sugar, Sugar", "a": "The Archies", "y": 1969, "d": "60s", "g": "Pop"}, {"t": "Theme from The Brady Bunch", "a": "Frank De Vol", "y": 1969, "d": "60s", "g": "TV & Movie Themes"}, {"t": "Okie from Muskogee", "a": "Merle Haggard", "y": 1969, "d": "60s", "g": "Country"}, {"t": "Bridge Over Troubled Water", "a": "Simon & Garfunkel", "y": 1970, "d": "70s", "g": "Rock"}, {"t": "Let It Be", "a": "The Beatles", "y": 1970, "d": "70s", "g": "Rock"}, {"t": "Ain't No Mountain High Enough", "a": "Diana Ross", "y": 1970, "d": "70s", "g": "R&B/Soul"}, {"t": "American Pie", "a": "Don McLean", "y": 1971, "d": "70s", "g": "Rock"}, {"t": "Stairway to Heaven", "a": "Led Zeppelin", "y": 1971, "d": "70s", "g": "Rock"}, {"t": "Imagine", "a": "John Lennon", "y": 1971, "d": "70s", "g": "Rock"}, {"t": "Maggie May", "a": "Rod Stewart", "y": 1971, "d": "70s", "g": "Rock"}, {"t": "What's Going On", "a": "Marvin Gaye", "y": 1971, "d": "70s", "g": "R&B/Soul"}, {"t": "Brown Sugar", "a": "The Rolling Stones", "y": 1971, "d": "70s", "g": "Rock"}, {"t": "Theme from Shaft", "a": "Isaac Hayes", "y": 1971, "d": "70s", "g": "TV & Movie Themes"}, {"t": "Take Me Home, Country Roads", "a": "John Denver", "y": 1971, "d": "70s", "g": "Country"}, {"t": "Superstition", "a": "Stevie Wonder", "y": 1972, "d": "70s", "g": "R&B/Soul"}, {"t": "Papa Was a Rollin' Stone", "a": "The Temptations", "y": 1972, "d": "70s", "g": "R&B/Soul"}, {"t": "Lean on Me", "a": "Bill Withers", "y": 1972, "d": "70s", "g": "R&B/Soul"}, {"t": "Rocket Man", "a": "Elton John", "y": 1972, "d": "70s", "g": "Pop"}, {"t": "You're So Vain", "a": "Carly Simon", "y": 1972, "d": "70s", "g": "Pop"}, {"t": "Killing Me Softly with His Song", "a": "Roberta Flack", "y": 1973, "d": "70s", "g": "R&B/Soul"}, {"t": "Crocodile Rock", "a": "Elton John", "y": 1973, "d": "70s", "g": "Pop"}, {"t": "Let's Get It On", "a": "Marvin Gaye", "y": 1973, "d": "70s", "g": "R&B/Soul"}, {"t": "The Joker", "a": "Steve Miller Band", "y": 1973, "d": "70s", "g": "Rock"}, {"t": "Band on the Run", "a": "Paul McCartney & Wings", "y": 1973, "d": "70s", "g": "Rock"}, {"t": "Jolene", "a": "Dolly Parton", "y": 1973, "d": "70s", "g": "Country"}, {"t": "Kung Fu Fighting", "a": "Carl Douglas", "y": 1974, "d": "70s", "g": "Disco/Dance"}, {"t": "Rock the Boat", "a": "The Hues Corporation", "y": 1974, "d": "70s", "g": "Disco/Dance"}, {"t": "Bohemian Rhapsody", "a": "Queen", "y": 1975, "d": "70s", "g": "Rock"}, {"t": "Philadelphia Freedom", "a": "Elton John", "y": 1975, "d": "70s", "g": "Pop"}, {"t": "Fame", "a": "David Bowie", "y": 1975, "d": "70s", "g": "Rock"}, {"t": "Love Will Keep Us Together", "a": "Captain & Tennille", "y": 1975, "d": "70s", "g": "Pop"}, {"t": "Movin' On Up (Theme from The Jeffersons)", "a": "Ja'net DuBois", "y": 1975, "d": "70s", "g": "TV & Movie Themes"}, {"t": "Dancing Queen", "a": "ABBA", "y": 1976, "d": "70s", "g": "Pop"}, {"t": "Hotel California", "a": "Eagles", "y": 1976, "d": "70s", "g": "Rock"}, {"t": "Theme from Happy Days", "a": "Pratt & McClain", "y": 1976, "d": "70s", "g": "TV & Movie Themes"}, {"t": "Making Our Dreams Come True (Theme from Laverne & Shirley)", "a": "Cyndi Grecco", "y": 1976, "d": "70s", "g": "TV & Movie Themes"}, {"t": "Gonna Fly Now (Theme from Rocky)", "a": "Bill Conti", "y": 1976, "d": "70s", "g": "TV & Movie Themes"}, {"t": "Stayin' Alive", "a": "Bee Gees", "y": 1977, "d": "70s", "g": "Disco/Dance"}, {"t": "Go Your Own Way", "a": "Fleetwood Mac", "y": 1977, "d": "70s", "g": "Rock"}, {"t": "Dreams", "a": "Fleetwood Mac", "y": 1977, "d": "70s", "g": "Rock"}, {"t": "Sir Duke", "a": "Stevie Wonder", "y": 1977, "d": "70s", "g": "R&B/Soul"}, {"t": "Star Wars (Main Title)", "a": "John Williams", "y": 1977, "d": "70s", "g": "TV & Movie Themes"}, {"t": "Lucille", "a": "Kenny Rogers", "y": 1977, "d": "70s", "g": "Country"}, {"t": "Don't It Make My Brown Eyes Blue", "a": "Crystal Gayle", "y": 1977, "d": "70s", "g": "Country"}, {"t": "Le Freak", "a": "Chic", "y": 1978, "d": "70s", "g": "Disco/Dance"}, {"t": "September", "a": "Earth, Wind & Fire", "y": 1978, "d": "70s", "g": "Disco/Dance"}, {"t": "I Will Survive", "a": "Gloria Gaynor", "y": 1978, "d": "70s", "g": "Disco/Dance"}, {"t": "You're the One That I Want", "a": "John Travolta & Olivia Newton-John", "y": 1978, "d": "70s", "g": "Disco/Dance"}, {"t": "Night Fever", "a": "Bee Gees", "y": 1978, "d": "70s", "g": "Disco/Dance"}, {"t": "Y.M.C.A.", "a": "Village People", "y": 1978, "d": "70s", "g": "Disco/Dance"}, {"t": "Grease", "a": "Frankie Valli", "y": 1978, "d": "70s", "g": "TV & Movie Themes"}, {"t": "Theme from Superman", "a": "John Williams", "y": 1978, "d": "70s", "g": "TV & Movie Themes"}, {"t": "My Sharona", "a": "The Knack", "y": 1979, "d": "70s", "g": "Disco/Dance"}, {"t": "Heart of Glass", "a": "Blondie", "y": 1979, "d": "70s", "g": "Disco/Dance"}, {"t": "Bad Girls", "a": "Donna Summer", "y": 1979, "d": "70s", "g": "Disco/Dance"}, {"t": "The Devil Went Down to Georgia", "a": "Charlie Daniels Band", "y": 1979, "d": "70s", "g": "Country"}, {"t": "Call Me", "a": "Blondie", "y": 1980, "d": "80s", "g": "Disco/Dance"}, {"t": "Another Brick in the Wall (Part 2)", "a": "Pink Floyd", "y": 1980, "d": "80s", "g": "Rock"}, {"t": "9 to 5", "a": "Dolly Parton", "y": 1980, "d": "80s", "g": "Country"}, {"t": "On the Road Again", "a": "Willie Nelson", "y": 1980, "d": "80s", "g": "Country"}, {"t": "Don't Stop Believin'", "a": "Journey", "y": 1981, "d": "80s", "g": "Rock"}, {"t": "Bette Davis Eyes", "a": "Kim Carnes", "y": 1981, "d": "80s", "g": "Pop"}, {"t": "Physical", "a": "Olivia Newton-John", "y": 1981, "d": "80s", "g": "Pop"}, {"t": "Jessie's Girl", "a": "Rick Springfield", "y": 1981, "d": "80s", "g": "Rock"}, {"t": "Believe It or Not (Theme from The Greatest American Hero)", "a": "Joey Scarbury", "y": 1981, "d": "80s", "g": "TV & Movie Themes"}, {"t": "Beat It", "a": "Michael Jackson", "y": 1982, "d": "80s", "g": "Pop"}, {"t": "Africa", "a": "Toto", "y": 1982, "d": "80s", "g": "Rock"}, {"t": "I Love Rock 'N Roll", "a": "Joan Jett & the Blackhearts", "y": 1982, "d": "80s", "g": "Rock"}, {"t": "Eye of the Tiger", "a": "Survivor", "y": 1982, "d": "80s", "g": "Rock"}, {"t": "Come On Eileen", "a": "Dexys Midnight Runners", "y": 1982, "d": "80s", "g": "Pop"}, {"t": "Where Everybody Knows Your Name (Theme from Cheers)", "a": "Gary Portnoy", "y": 1982, "d": "80s", "g": "TV & Movie Themes"}, {"t": "Billie Jean", "a": "Michael Jackson", "y": 1983, "d": "80s", "g": "Pop"}, {"t": "Every Breath You Take", "a": "The Police", "y": 1983, "d": "80s", "g": "Rock"}, {"t": "Sweet Dreams (Are Made of This)", "a": "Eurythmics", "y": 1983, "d": "80s", "g": "Pop"}, {"t": "Girls Just Want to Have Fun", "a": "Cyndi Lauper", "y": 1983, "d": "80s", "g": "Pop"}, {"t": "Karma Chameleon", "a": "Culture Club", "y": 1983, "d": "80s", "g": "Pop"}, {"t": "Flashdance... What a Feeling", "a": "Irene Cara", "y": 1983, "d": "80s", "g": "Pop"}, {"t": "Total Eclipse of the Heart", "a": "Bonnie Tyler", "y": 1983, "d": "80s", "g": "Pop"}, {"t": "Amarillo by Morning", "a": "George Strait", "y": 1983, "d": "80s", "g": "Country"}, {"t": "Islands in the Stream", "a": "Kenny Rogers & Dolly Parton", "y": 1983, "d": "80s", "g": "Country"}, {"t": "Dixieland Delight", "a": "Alabama", "y": 1983, "d": "80s", "g": "Country"}, {"t": "Like a Virgin", "a": "Madonna", "y": 1984, "d": "80s", "g": "Pop"}, {"t": "Wake Me Up Before You Go-Go", "a": "Wham!", "y": 1984, "d": "80s", "g": "Pop"}, {"t": "When Doves Cry", "a": "Prince", "y": 1984, "d": "80s", "g": "R&B/Soul"}, {"t": "Footloose", "a": "Kenny Loggins", "y": 1984, "d": "80s", "g": "Pop"}, {"t": "I Want to Know What Love Is", "a": "Foreigner", "y": 1984, "d": "80s", "g": "Rock"}, {"t": "Why Not Me", "a": "The Judds", "y": 1984, "d": "80s", "g": "Country"}, {"t": "Take On Me", "a": "a-ha", "y": 1985, "d": "80s", "g": "Pop"}, {"t": "We Are the World", "a": "USA for Africa", "y": 1985, "d": "80s", "g": "Pop"}, {"t": "Money for Nothing", "a": "Dire Straits", "y": 1985, "d": "80s", "g": "Rock"}, {"t": "Miami Vice Theme", "a": "Jan Hammer", "y": 1985, "d": "80s", "g": "TV & Movie Themes"}, {"t": "Livin' on a Prayer", "a": "Bon Jovi", "y": 1986, "d": "80s", "g": "Rock"}, {"t": "Papa Don't Preach", "a": "Madonna", "y": 1986, "d": "80s", "g": "Pop"}, {"t": "Walk Like an Egyptian", "a": "The Bangles", "y": 1986, "d": "80s", "g": "Pop"}, {"t": "Danger Zone", "a": "Kenny Loggins", "y": 1986, "d": "80s", "g": "TV & Movie Themes"}, {"t": "Take My Breath Away", "a": "Berlin", "y": 1986, "d": "80s", "g": "TV & Movie Themes"}, {"t": "Whoever's in New England", "a": "Reba McEntire", "y": 1986, "d": "80s", "g": "Country"}, {"t": "Sweet Child O' Mine", "a": "Guns N' Roses", "y": 1987, "d": "80s", "g": "Rock"}, {"t": "With or Without You", "a": "U2", "y": 1987, "d": "80s", "g": "Rock"}, {"t": "Faith", "a": "George Michael", "y": 1987, "d": "80s", "g": "Pop"}, {"t": "Never Gonna Give You Up", "a": "Rick Astley", "y": 1987, "d": "80s", "g": "Pop"}, {"t": "Forever and Ever, Amen", "a": "Randy Travis", "y": 1987, "d": "80s", "g": "Country"}, {"t": "Pour Some Sugar on Me", "a": "Def Leppard", "y": 1988, "d": "80s", "g": "Rock"}, {"t": "Kokomo", "a": "The Beach Boys", "y": 1988, "d": "80s", "g": "Rock"}, {"t": "Theme from Full House", "a": "Jesse Frederick", "y": 1988, "d": "80s", "g": "TV & Movie Themes"}, {"t": "Like a Prayer", "a": "Madonna", "y": 1989, "d": "80s", "g": "Pop"}, {"t": "The Simpsons Theme", "a": "Danny Elfman", "y": 1989, "d": "80s", "g": "TV & Movie Themes"}, {"t": "Theme from Seinfeld", "a": "Jonathan Wolff", "y": 1989, "d": "80s", "g": "TV & Movie Themes"}, {"t": "Vogue", "a": "Madonna", "y": 1990, "d": "90s", "g": "Pop"}, {"t": "Ice Ice Baby", "a": "Vanilla Ice", "y": 1990, "d": "90s", "g": "Hip-Hop/Rap"}, {"t": "Theme from Law & Order", "a": "Mike Post", "y": 1990, "d": "90s", "g": "TV & Movie Themes"}, {"t": "Theme from The Fresh Prince of Bel-Air", "a": "Will Smith", "y": 1990, "d": "90s", "g": "TV & Movie Themes"}, {"t": "Friends in Low Places", "a": "Garth Brooks", "y": 1990, "d": "90s", "g": "Country"}, {"t": "Losing My Religion", "a": "R.E.M.", "y": 1991, "d": "90s", "g": "Alternative/Grunge"}, {"t": "Smells Like Teen Spirit", "a": "Nirvana", "y": 1991, "d": "90s", "g": "Alternative/Grunge"}, {"t": "Black or White", "a": "Michael Jackson", "y": 1991, "d": "90s", "g": "Pop"}, {"t": "(Everything I Do) I Do It for You", "a": "Bryan Adams", "y": 1991, "d": "90s", "g": "TV & Movie Themes"}, {"t": "Under the Bridge", "a": "Red Hot Chili Peppers", "y": 1992, "d": "90s", "g": "Alternative/Grunge"}, {"t": "I Will Always Love You", "a": "Whitney Houston", "y": 1992, "d": "90s", "g": "R&B/Soul"}, {"t": "Baby Got Back", "a": "Sir Mix-a-Lot", "y": 1992, "d": "90s", "g": "Hip-Hop/Rap"}, {"t": "Achy Breaky Heart", "a": "Billy Ray Cyrus", "y": 1992, "d": "90s", "g": "Country"}, {"t": "Boot Scootin' Boogie", "a": "Brooks & Dunn", "y": 1992, "d": "90s", "g": "Country"}, {"t": "Creep", "a": "Radiohead", "y": 1993, "d": "90s", "g": "Alternative/Grunge"}, {"t": "All That She Wants", "a": "Ace of Base", "y": 1993, "d": "90s", "g": "Pop"}, {"t": "Theme from The X-Files", "a": "Mark Snow", "y": 1993, "d": "90s", "g": "TV & Movie Themes"}, {"t": "Chattahoochee", "a": "Alan Jackson", "y": 1993, "d": "90s", "g": "Country"}, {"t": "Waterfalls", "a": "TLC", "y": 1994, "d": "90s", "g": "R&B/Soul"}, {"t": "The Sign", "a": "Ace of Base", "y": 1994, "d": "90s", "g": "Pop"}, {"t": "Don't Take the Girl", "a": "Tim McGraw", "y": 1994, "d": "90s", "g": "Country"}, {"t": "Wonderwall", "a": "Oasis", "y": 1995, "d": "90s", "g": "Alternative/Grunge"}, {"t": "Gangsta's Paradise", "a": "Coolio ft. L.V.", "y": 1995, "d": "90s", "g": "Hip-Hop/Rap"}, {"t": "Kiss From a Rose", "a": "Seal", "y": 1995, "d": "90s", "g": "Pop"}, {"t": "I'll Be There for You (Theme from Friends)", "a": "The Rembrandts", "y": 1995, "d": "90s", "g": "TV & Movie Themes"}, {"t": "Any Man of Mine", "a": "Shania Twain", "y": 1995, "d": "90s", "g": "Country"}, {"t": "Wannabe", "a": "Spice Girls", "y": 1996, "d": "90s", "g": "Pop"}, {"t": "Macarena", "a": "Los Del Rio", "y": 1996, "d": "90s", "g": "Pop"}, {"t": "MMMBop", "a": "Hanson", "y": 1997, "d": "90s", "g": "Pop"}, {"t": "Torn", "a": "Natalie Imbruglia", "y": 1997, "d": "90s", "g": "Pop"}, {"t": "Barbie Girl", "a": "Aqua", "y": 1997, "d": "90s", "g": "Pop"}, {"t": "Bitter Sweet Symphony", "a": "The Verve", "y": 1997, "d": "90s", "g": "Alternative/Grunge"}, {"t": "I'll Be Missing You", "a": "Puff Daddy ft. Faith Evans & 112", "y": 1997, "d": "90s", "g": "Hip-Hop/Rap"}, {"t": "...Baby One More Time", "a": "Britney Spears", "y": 1998, "d": "90s", "g": "Pop"}, {"t": "My Heart Will Go On", "a": "Celine Dion", "y": 1998, "d": "90s", "g": "Pop"}, {"t": "Believe", "a": "Cher", "y": 1998, "d": "90s", "g": "Pop"}, {"t": "Doo Wop (That Thing)", "a": "Lauryn Hill", "y": 1998, "d": "90s", "g": "Hip-Hop/Rap"}, {"t": "This Kiss", "a": "Faith Hill", "y": 1998, "d": "90s", "g": "Country"}, {"t": "You're Still the One", "a": "Shania Twain", "y": 1998, "d": "90s", "g": "Country"}, {"t": "Wide Open Spaces", "a": "Dixie Chicks", "y": 1998, "d": "90s", "g": "Country"}, {"t": "No Scrubs", "a": "TLC", "y": 1999, "d": "90s", "g": "R&B/Soul"}, {"t": "I Want It That Way", "a": "Backstreet Boys", "y": 1999, "d": "90s", "g": "Pop"}, {"t": "Genie in a Bottle", "a": "Christina Aguilera", "y": 1999, "d": "90s", "g": "Pop"}, {"t": "Livin' la Vida Loca", "a": "Ricky Martin", "y": 1999, "d": "90s", "g": "Pop"}, {"t": "Smooth", "a": "Santana ft. Rob Thomas", "y": 1999, "d": "90s", "g": "Rock"}, {"t": "Man! I Feel Like a Woman", "a": "Shania Twain", "y": 1999, "d": "90s", "g": "Country"}, {"t": "Theme from SpongeBob SquarePants", "a": "Various Artists", "y": 1999, "d": "90s", "g": "TV & Movie Themes"}, {"t": "Woke Up This Morning (Theme from The Sopranos)", "a": "Alabama 3", "y": 1999, "d": "90s", "g": "TV & Movie Themes"}, {"t": "Oops!... I Did It Again", "a": "Britney Spears", "y": 2000, "d": "2000s", "g": "Pop"}, {"t": "Bye Bye Bye", "a": "NSYNC", "y": 2000, "d": "2000s", "g": "Pop"}, {"t": "Say My Name", "a": "Destiny's Child", "y": 2000, "d": "2000s", "g": "R&B/Soul"}, {"t": "Beautiful Day", "a": "U2", "y": 2000, "d": "2000s", "g": "Rock"}, {"t": "Fallin'", "a": "Alicia Keys", "y": 2001, "d": "2000s", "g": "R&B/Soul"}, {"t": "Get the Party Started", "a": "Pink", "y": 2001, "d": "2000s", "g": "Pop"}, {"t": "In the End", "a": "Linkin Park", "y": 2001, "d": "2000s", "g": "Alternative/Grunge"}, {"t": "Complicated", "a": "Avril Lavigne", "y": 2002, "d": "2000s", "g": "Pop"}, {"t": "Hot in Herre", "a": "Nelly", "y": 2002, "d": "2000s", "g": "Hip-Hop/Rap"}, {"t": "Dilemma", "a": "Nelly ft. Kelly Rowland", "y": 2002, "d": "2000s", "g": "Hip-Hop/Rap"}, {"t": "Lose Yourself", "a": "Eminem", "y": 2002, "d": "2000s", "g": "Hip-Hop/Rap"}, {"t": "Beautiful", "a": "Christina Aguilera", "y": 2002, "d": "2000s", "g": "Pop"}, {"t": "Courtesy of the Red, White and Blue", "a": "Toby Keith", "y": 2002, "d": "2000s", "g": "Country"}, {"t": "Somebody Like You", "a": "Keith Urban", "y": 2002, "d": "2000s", "g": "Country"}, {"t": "No Shoes, No Shirt, No Problems", "a": "Kenny Chesney", "y": 2002, "d": "2000s", "g": "Country"}, {"t": "Hey Ya!", "a": "OutKast", "y": 2003, "d": "2000s", "g": "Hip-Hop/Rap"}, {"t": "Crazy in Love", "a": "Beyoncé ft. Jay-Z", "y": 2003, "d": "2000s", "g": "R&B/Soul"}, {"t": "Toxic", "a": "Britney Spears", "y": 2003, "d": "2000s", "g": "Pop"}, {"t": "In Da Club", "a": "50 Cent", "y": 2003, "d": "2000s", "g": "Hip-Hop/Rap"}, {"t": "Mr. Brightside", "a": "The Killers", "y": 2003, "d": "2000s", "g": "Alternative/Grunge"}, {"t": "Bring Me to Life", "a": "Evanescence", "y": 2003, "d": "2000s", "g": "Alternative/Grunge"}, {"t": "Milkshake", "a": "Kelis", "y": 2003, "d": "2000s", "g": "R&B/Soul"}, {"t": "Seven Nation Army", "a": "The White Stripes", "y": 2003, "d": "2000s", "g": "Alternative/Grunge"}, {"t": "Since U Been Gone", "a": "Kelly Clarkson", "y": 2004, "d": "2000s", "g": "Pop"}, {"t": "Boulevard of Broken Dreams", "a": "Green Day", "y": 2004, "d": "2000s", "g": "Alternative/Grunge"}, {"t": "Yeah!", "a": "Usher ft. Lil Jon & Ludacris", "y": 2004, "d": "2000s", "g": "R&B/Soul"}, {"t": "Baby Girl", "a": "Sugarland", "y": 2004, "d": "2000s", "g": "Country"}, {"t": "Save a Horse (Ride a Cowboy)", "a": "Big & Rich", "y": 2004, "d": "2000s", "g": "Country"}, {"t": "Whiskey Lullaby", "a": "Brad Paisley ft. Alison Krauss", "y": 2004, "d": "2000s", "g": "Country"}, {"t": "Hollaback Girl", "a": "Gwen Stefani", "y": 2005, "d": "2000s", "g": "Pop"}, {"t": "Gold Digger", "a": "Kanye West ft. Jamie Foxx", "y": 2005, "d": "2000s", "g": "Hip-Hop/Rap"}, {"t": "Feel Good Inc.", "a": "Gorillaz", "y": 2005, "d": "2000s", "g": "Alternative/Grunge"}, {"t": "Theme from The Office", "a": "Jay Ferguson", "y": 2005, "d": "2000s", "g": "TV & Movie Themes"}, {"t": "Jesus, Take the Wheel", "a": "Carrie Underwood", "y": 2005, "d": "2000s", "g": "Country"}, {"t": "SexyBack", "a": "Justin Timberlake", "y": 2006, "d": "2000s", "g": "Pop"}, {"t": "SOS", "a": "Rihanna", "y": 2006, "d": "2000s", "g": "R&B/Soul"}, {"t": "Crazy", "a": "Gnarls Barkley", "y": 2006, "d": "2000s", "g": "Alternative/Grunge"}, {"t": "Irreplaceable", "a": "Beyoncé", "y": 2006, "d": "2000s", "g": "R&B/Soul"}, {"t": "Life Is a Highway", "a": "Rascal Flatts", "y": 2006, "d": "2000s", "g": "Country"}, {"t": "Tim McGraw", "a": "Taylor Swift", "y": 2006, "d": "2000s", "g": "Country"}, {"t": "Umbrella", "a": "Rihanna ft. Jay-Z", "y": 2007, "d": "2000s", "g": "R&B/Soul"}, {"t": "Apologize", "a": "OneRepublic ft. Timbaland", "y": 2007, "d": "2000s", "g": "Pop"}, {"t": "Just Dance", "a": "Lady Gaga", "y": 2008, "d": "2000s", "g": "Pop"}, {"t": "Low", "a": "Flo Rida ft. T-Pain", "y": 2008, "d": "2000s", "g": "Hip-Hop/Rap"}, {"t": "Viva la Vida", "a": "Coldplay", "y": 2008, "d": "2000s", "g": "Alternative/Grunge"}, {"t": "I Kissed a Girl", "a": "Katy Perry", "y": 2008, "d": "2000s", "g": "Pop"}, {"t": "Poker Face", "a": "Lady Gaga", "y": 2008, "d": "2000s", "g": "Pop"}];
+
+const DECADE_CLASS = {"50s":"d50","60s":"d60","70s":"d70","80s":"d80","90s":"d90","2000s":"d00"};
+
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+
+function vinylSVG(){
+  return `<svg class="vinyl" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="20" cy="20" r="18" fill="#111"/>
+    <circle cx="20" cy="20" r="14.5" fill="none" stroke="#333" stroke-width="0.6"/>
+    <circle cx="20" cy="20" r="11.5" fill="none" stroke="#333" stroke-width="0.6"/>
+    <circle cx="20" cy="20" r="8" fill="#C98A1F"/>
+    <circle cx="20" cy="20" r="2" fill="#111"/>
+  </svg>`;
+}
+
+function cardHTML(cardNum, songs, sideLabel){
+  const cells = songs.map((s,i)=>{
+    if(i===12){
+      return `<div class="cell free">${vinylSVG()}<div class="title">FREE<br>SPACE</div></div>`;
+    }
+    const cls = DECADE_CLASS[s.d];
+    return `<div class="cell">
+        <span class="dot ${cls}"></span>
+        <span class="yr">${s.y}</span>
+        <div class="title">${s.t}</div>
+        <div class="artist">${s.a}</div>
+      </div>`;
+  }).join('');
+
+  const sideLine = sideLabel ? `<br>${sideLabel}` : '';
+
+  return `<div class="card">
+    <div class="card-head">
+      <h2>Spin the <span>Decades</span></h2>
+      <div class="meta">MUSIC BINGO<br><b>Card #${String(cardNum).padStart(3,'0')}</b>${sideLine}</div>
+    </div>
+    <div class="grid">${cells}</div>
+    <div class="card-foot">
+      <span>Mark the square when your song plays</span>
+      <span>5 in a row = BINGO</span>
+    </div>
+  </div>`;
+}
+
+function goHome(){
+  try{ window.close(); }catch(e){}
+  setTimeout(function(){
+    if(!window.closed){ window.location.href = 'music_bingo_caller.html'; }
+  }, 250);
+}
+
+function renderAll(){
+  let n = parseInt(document.getElementById('cardCount').value,10);
+  if(!n || n<1) n=1;
+  if(n>200) n=200;
+  const doubleSided = document.getElementById('doubleSided').checked;
+
+  const sheets = document.getElementById('sheets');
+  let html = '';
+
+  for(let i=1;i<=n;i++){
+    const pick = shuffle(SONGS).slice(0,24);
+    pick.splice(12,0,{free:true});
+
+    let sideLabel = null;
+    if(doubleSided){
+      const sheetNum = Math.ceil(i/2);
+      const side = (i % 2 === 1) ? 'Front' : 'Back';
+      sideLabel = `Sheet ${String(sheetNum).padStart(3,'0')} · ${side}`;
+    }
+
+    const card = cardHTML(i, pick, sideLabel);
+    html += `<div class="sheet">${card}</div>`;
+  }
+
+  sheets.innerHTML = html;
+}
+
+renderAll();
+</script>
+</body>
+</html>

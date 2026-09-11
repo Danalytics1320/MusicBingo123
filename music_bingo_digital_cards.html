@@ -1,0 +1,3076 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Spin the Decades — Digital Cards</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bungee&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F2E8D8;
+    --card:#FBF6EC;
+    --ink:#241C14;
+    --ink-soft:#5b4f3f;
+    --gold:#C98A1F;
+    --line:#d9cba9;
+    --chip:#fbf3e0;
+    --d50:#B23A2E;
+    --d60:#C98A1F;
+    --d70:#47795A;
+    --d80:#6A4C93;
+    --d90:#2E6E8E;
+    --d00:#B23368;
+    --dtv:#5B5F97;
+    --gRock:#8B5E3C;
+    --gPop:#E85D9C;
+    --gRnB:#8E5FD9;
+    --gHipHop:#3A3A3A;
+    --gCountry:#A9701F;
+    --gDisco:#29ADB2;
+    --gAlt:#556B5D;
+    --gThemes:#5B5F97;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Space Grotesk',sans-serif;
+    -webkit-print-color-adjust:exact;
+    print-color-adjust:exact;
+  }
+  .wrap{
+    max-width:980px;
+    margin:0 auto;
+    padding:30px 20px 60px;
+  }
+
+  /* ---------- shared header ---------- */
+  .page-head{
+    text-align:center;
+    margin-bottom:24px;
+  }
+  .page-head h1{
+    font-family:'Bungee',cursive;
+    font-size:clamp(26px,5vw,42px);
+    margin:0 0 6px;
+    letter-spacing:.4px;
+  }
+  .page-head h1 span{color:var(--gold);}
+  .page-head p.sub{
+    color:var(--ink-soft);
+    margin:0 auto;
+    max-width:560px;
+    font-size:14.5px;
+    line-height:1.5;
+  }
+
+  .btn{
+    font-family:'Space Grotesk',sans-serif;
+    font-weight:700;
+    font-size:14px;
+    border:none;
+    border-radius:999px;
+    padding:10px 22px;
+    cursor:pointer;
+  }
+  .btn-primary{background:var(--ink);color:var(--paper);}
+  .btn-secondary{background:transparent;color:var(--ink);border:1.5px solid var(--ink);}
+
+  /* ---------- host: decade chips (reused pattern) ---------- */
+  .panel{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:16px;
+    padding:22px 24px;
+    margin-bottom:22px;
+  }
+  .panel h3{
+    font-family:'Bungee',cursive;
+    font-size:16px;
+    margin:0 0 14px;
+    letter-spacing:.3px;
+    color:var(--gold);
+  }
+  .decade-chips{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+    margin-bottom:6px;
+  }
+  .decade-btn{
+    font-family:'Space Grotesk',sans-serif;
+    font-weight:700;
+    font-size:13px;
+    text-transform:uppercase;
+    letter-spacing:.04em;
+    color:#fff;
+    border:2.5px solid transparent;
+    border-radius:999px;
+    padding:9px 18px;
+    cursor:pointer;
+    opacity:.35;
+    filter:grayscale(.4);
+    transition:opacity .15s ease, filter .15s ease;
+  }
+  .decade-btn.active{
+    opacity:1;
+    filter:none;
+    border-color:var(--ink);
+  }
+  .decade-btn.all-btn{background:var(--ink);color:#fff;}
+  .d50{background:var(--d50);} .d60{background:var(--d60);} .d70{background:var(--d70);}
+  .d80{background:var(--d80);} .d90{background:var(--d90);} .d00{background:var(--d00);} .dtv{background:var(--dtv);}
+  .gRock{background:var(--gRock);} .gPop{background:var(--gPop);} .gRnB{background:var(--gRnB);}
+  .gHipHop{background:var(--gHipHop);} .gCountry{background:var(--gCountry);} .gDisco{background:var(--gDisco);}
+  .gAlt{background:var(--gAlt);} .gThemes{background:var(--gThemes);}
+
+  .field-row{
+    display:flex;
+    flex-wrap:wrap;
+    gap:14px;
+    align-items:center;
+    margin-top:16px;
+  }
+  .field-row label{
+    font-size:13px;
+    font-weight:600;
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+  }
+  .field-row input[type=number]{
+    width:80px;
+    font-family:'JetBrains Mono',monospace;
+    font-weight:700;
+    font-size:14px;
+    padding:8px 10px;
+    border:1px solid var(--line);
+    border-radius:8px;
+    background:#fff;
+  }
+  .field-row input[type=text]{
+    width:100%;
+    min-width:260px;
+    flex:1;
+    font-family:'JetBrains Mono',monospace;
+    font-size:13px;
+    padding:9px 12px;
+    border:1px solid var(--line);
+    border-radius:8px;
+    background:#fff;
+  }
+  .hint-box{
+    background:var(--chip);
+    border:1.5px dashed var(--line);
+    border-radius:12px;
+    padding:14px 16px;
+    font-size:12.5px;
+    color:var(--ink-soft);
+    line-height:1.55;
+    margin-top:16px;
+  }
+  .hint-box b{color:var(--ink);}
+  .hint-box code{
+    background:#fff;
+    padding:2px 6px;
+    border-radius:5px;
+    font-family:'JetBrains Mono',monospace;
+  }
+
+  .action-row{
+    display:flex;
+    flex-wrap:wrap;
+    gap:12px;
+    margin-top:20px;
+  }
+
+  .error-msg{
+    color:#B23A2E;
+    font-size:13px;
+    font-weight:600;
+    margin-top:10px;
+    display:none;
+  }
+
+  /* ---------- host: generated grid ---------- */
+  .qr-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill, minmax(180px, 1fr));
+    gap:16px;
+    margin-top:8px;
+  }
+  .qr-tile{
+    background:var(--card);
+    border:1.5px solid var(--line);
+    border-radius:14px;
+    padding:16px;
+    text-align:center;
+  }
+  .qr-tile svg{width:100%;height:auto;max-width:160px;margin:0 auto 10px;display:block;}
+  .qr-tile .tile-num{
+    font-family:'JetBrains Mono',monospace;
+    font-weight:700;
+    font-size:13px;
+    margin-bottom:6px;
+  }
+  .qr-tile a{
+    display:inline-block;
+    font-size:11px;
+    color:var(--gold);
+    text-decoration:none;
+    font-weight:600;
+    word-break:break-all;
+  }
+
+  /* ---------- print tickets ---------- */
+  .ticket-sheet{display:none;}
+  @media print{
+    body{background:#fff;}
+    .no-print{display:none!important;}
+    .ticket-sheet{
+      display:grid!important;
+      grid-template-columns:repeat(2, 1fr);
+      gap:14px;
+    }
+    .ticket{
+      border:2px dashed var(--ink);
+      border-radius:10px;
+      padding:14px;
+      text-align:center;
+      break-inside:avoid;
+    }
+    .ticket svg{width:100%;max-width:130px;margin:0 auto 6px;display:block;}
+    .ticket .t-title{font-family:'Bungee',cursive;font-size:13px;margin-bottom:4px;}
+    .ticket .t-num{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;}
+    .ticket .t-sub{font-size:9.5px;color:var(--ink-soft);margin-top:4px;}
+  }
+
+  /* ---------- player card view ---------- */
+  #hostView{display:none;}
+  #playerView{display:none;}
+  .player-wrap{
+    max-width:480px;
+    margin:0 auto;
+    padding:18px 14px 50px;
+  }
+  .player-head{
+    text-align:center;
+    margin-bottom:14px;
+  }
+  .player-head h1{
+    font-family:'Bungee',cursive;
+    font-size:26px;
+    margin:0 0 2px;
+  }
+  .player-head h1 span{color:var(--gold);}
+  .player-head .cardnum{
+    font-family:'JetBrains Mono',monospace;
+    font-size:13px;
+    color:var(--ink-soft);
+  }
+  .bingo-banner{
+    display:none;
+    text-align:center;
+    font-family:'Bungee',cursive;
+    font-size:22px;
+    color:#fff;
+    background:linear-gradient(135deg,#FF9A5A,#F0568F);
+    padding:14px;
+    border-radius:14px;
+    margin-bottom:14px;
+    box-shadow:0 6px 18px rgba(240,86,143,.35);
+  }
+  .player-card{
+    border:3px solid var(--ink);
+    border-radius:18px;
+    padding:14px;
+    background:var(--card);
+  }
+  .player-grid{
+    display:grid;
+    grid-template-columns:repeat(5,1fr);
+    grid-template-rows:repeat(5,1fr);
+    aspect-ratio:1/1;
+    gap:6px;
+  }
+  .p-cell{
+    border:1.5px solid var(--line);
+    border-radius:8px;
+    background:#fff;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    text-align:center;
+    padding:4px 3px;
+    position:relative;
+    cursor:pointer;
+    user-select:none;
+    -webkit-tap-highlight-color:transparent;
+    overflow:hidden;
+    min-width:0;
+    min-height:0;
+  }
+  .p-cell .p-title{
+    font-weight:700;
+    font-size:9.5px;
+    line-height:1.15;
+    display:-webkit-box;
+    -webkit-box-orient:vertical;
+    -webkit-line-clamp:3;
+    overflow:hidden;
+    word-break:break-word;
+    max-width:100%;
+  }
+  .p-cell .p-artist{
+    font-size:7.5px;
+    color:var(--ink-soft);
+    margin-top:2px;
+    line-height:1.1;
+    display:-webkit-box;
+    -webkit-box-orient:vertical;
+    -webkit-line-clamp:2;
+    overflow:hidden;
+    word-break:break-word;
+    max-width:100%;
+  }
+  .p-cell .p-dot{
+    position:absolute;
+    top:3px; left:4px;
+    width:6px; height:6px;
+    border-radius:50%;
+  }
+  .p-cell.free{
+    background:var(--ink);
+    color:var(--paper);
+  }
+  .p-cell.free .p-title{
+    font-family:'Bungee',cursive;
+    font-size:10px;
+    color:var(--gold);
+  }
+  .p-cell.marked:not(.free){
+    background:#2E6E4A;
+  }
+  .p-cell.marked:not(.free) .p-title,
+  .p-cell.marked:not(.free) .p-artist{
+    color:#fff;
+  }
+  .p-cell.marked:not(.free)::after{
+    content:"✓";
+    position:absolute;
+    top:2px; right:4px;
+    font-size:11px;
+    font-weight:700;
+    color:#fff;
+  }
+  .player-controls{
+    display:flex;
+    justify-content:center;
+    gap:12px;
+    margin-top:18px;
+  }
+  .player-foot{
+    text-align:center;
+    margin-top:16px;
+    font-size:11px;
+    color:var(--ink-soft);
+  }
+
+  @media (max-width:600px){
+    .field-row input[type=text]{min-width:0;}
+  }
+</style>
+</head>
+<body>
+
+<div id="hostView" class="wrap">
+  <div class="page-head no-print">
+    <button class="btn-secondary" onclick="goHome()" style="margin-bottom:14px;">🏠 Home</button>
+    <h1>Spin the Decades <span>Digital Cards</span></h1>
+    <p class="sub">Generate unique digital bingo cards. Each QR code opens a player's own card on their phone — no printing full cards required.</p>
+  </div>
+
+  <div class="panel no-print">
+    <h3>Decade Mix</h3>
+    <div class="decade-chips">
+      <button class="decade-btn all-btn active" id="allBtn" onclick="selectAllDecades()">Mix of All</button>
+      <button class="decade-btn d50 active" data-decade="50s" onclick="toggleDecade(this,'50s')">50s</button>
+      <button class="decade-btn d60 active" data-decade="60s" onclick="toggleDecade(this,'60s')">60s</button>
+      <button class="decade-btn d70 active" data-decade="70s" onclick="toggleDecade(this,'70s')">70s</button>
+      <button class="decade-btn d80 active" data-decade="80s" onclick="toggleDecade(this,'80s')">80s</button>
+      <button class="decade-btn d90 active" data-decade="90s" onclick="toggleDecade(this,'90s')">90s</button>
+      <button class="decade-btn d00 active" data-decade="2000s" onclick="toggleDecade(this,'2000s')">2000s</button>
+    </div>
+  </div>
+
+  <div class="panel no-print">
+    <h3>Genre Mix</h3>
+    <div class="decade-chips">
+      <button class="decade-btn all-btn active" id="allGenreBtn" onclick="selectAllGenres()">Mix of All</button>
+      <button class="decade-btn gRock active" data-genre="Rock" onclick="toggleGenre(this,'Rock')">Rock</button>
+      <button class="decade-btn gPop active" data-genre="Pop" onclick="toggleGenre(this,'Pop')">Pop</button>
+      <button class="decade-btn gRnB active" data-genre="R&B/Soul" onclick="toggleGenre(this,'R&B/Soul')">R&amp;B/Soul</button>
+      <button class="decade-btn gHipHop active" data-genre="Hip-Hop/Rap" onclick="toggleGenre(this,'Hip-Hop/Rap')">Hip-Hop/Rap</button>
+      <button class="decade-btn gCountry active" data-genre="Country" onclick="toggleGenre(this,'Country')">Country</button>
+      <button class="decade-btn gDisco active" data-genre="Disco/Dance" onclick="toggleGenre(this,'Disco/Dance')">Disco/Dance</button>
+      <button class="decade-btn gAlt active" data-genre="Alternative/Grunge" onclick="toggleGenre(this,'Alternative/Grunge')">Alternative/Grunge</button>
+      <button class="decade-btn gThemes active" data-genre="TV & Movie Themes" onclick="toggleGenre(this,'TV & Movie Themes')">TV &amp; Movie Themes</button>
+    </div>
+    <span id="poolCount" style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--ink-soft);">294 songs available</span>
+  </div>
+
+  <div class="panel no-print">
+    <h3>Generate</h3>
+    <div class="field-row">
+      <label>Number of players
+        <input type="number" id="cardCount" value="30" min="1" max="200">
+      </label>
+      <label>Number of rounds per player
+        <input type="number" id="roundCount" value="5" min="1" max="15">
+      </label>
+      <label style="flex:1;">Base URL players will open — must start with https://
+        <span style="display:flex;gap:8px;align-items:center;">
+          <input type="text" id="baseUrl" value="" style="flex:1;">
+          <button type="button" class="btn-secondary" style="padding:9px 14px;font-size:12px;white-space:nowrap;" onclick="resetBaseUrl()">Reset to default</button>
+        </span>
+      </label>
+    </div>
+    <div class="error-msg" id="errorMsg"></div>
+    <div class="action-row">
+      <button class="btn-primary" onclick="generateCards()">Generate Digital Cards</button>
+      <button class="btn-secondary" onclick="window.print()">Print QR Tickets</button>
+    </div>
+    <div class="hint-box">
+      <b>Base URL</b> is pre-filled with your live site (<code>musicbingo123.netlify.app</code>) so QR codes work out of the box. Only change it if you move the game to a different domain — use "Reset to default" to go back. QR codes only work if players' phones can actually reach the link, so a <code>file://</code> path won't scan.
+      <br><br>
+      <b>Rounds:</b> each QR code bakes in several unique cards for that player. When the host starts a new round, players just tap "Next Round" on their own card — no rescanning needed. More rounds means a denser, slightly harder-to-scan QR code, so 5–8 rounds is a good default.
+    </div>
+  </div>
+
+  <div id="qrGrid" class="qr-grid no-print"></div>
+  <div id="ticketSheet" class="ticket-sheet"></div>
+</div>
+
+<div id="playerView">
+  <div class="player-wrap">
+    <div class="player-head">
+      <h1>Spin the <span>Decades</span></h1>
+      <div class="cardnum" id="cardNumLabel">Card #000</div>
+      <div class="cardnum" id="roundLabel">Round 1 of 1</div>
+    </div>
+    <div class="bingo-banner" id="bingoBanner">🎉 BINGO! 🎉</div>
+    <div class="player-card">
+      <div class="player-grid" id="playerGrid"></div>
+    </div>
+    <div class="player-controls">
+      <button class="btn-secondary" onclick="resetMarks()">Reset Marks</button>
+      <button class="btn-primary" id="nextRoundBtn" onclick="nextRound()">Next Round →</button>
+    </div>
+    <p class="player-foot">Tap a song when the host plays it. Mark 5 in a row to win! When the host starts a new round, tap "Next Round" above.</p>
+  </div>
+</div>
+
+<script>
+// Your live site's URL — used to pre-fill the Base URL field below.
+// Change this if you ever move the game to a different domain.
+const DEFAULT_BASE_URL = "https://musicbingo123.netlify.app/music_bingo_digital_cards.html";
+
+const SONGS = [{"t": "Rock Around the Clock", "a": "Bill Haley & His Comets", "y": 1954, "d": "50s", "g": "Rock"}, {"t": "Tutti Frutti", "a": "Little Richard", "y": 1955, "d": "50s", "g": "Rock"}, {"t": "Blue Suede Shoes", "a": "Carl Perkins", "y": 1955, "d": "50s", "g": "Rock"}, {"t": "Only You (And You Alone)", "a": "The Platters", "y": 1955, "d": "50s", "g": "R&B/Soul"}, {"t": "The Great Pretender", "a": "The Platters", "y": 1955, "d": "50s", "g": "R&B/Soul"}, {"t": "Ain't That a Shame", "a": "Fats Domino", "y": 1955, "d": "50s", "g": "Rock"}, {"t": "Sixteen Tons", "a": "Tennessee Ernie Ford", "y": 1955, "d": "50s", "g": "Country"}, {"t": "Hound Dog", "a": "Elvis Presley", "y": 1956, "d": "50s", "g": "Rock"}, {"t": "Why Do Fools Fall in Love", "a": "Frankie Lymon & the Teenagers", "y": 1956, "d": "50s", "g": "R&B/Soul"}, {"t": "See You Later, Alligator", "a": "Bill Haley & His Comets", "y": 1956, "d": "50s", "g": "Rock"}, {"t": "Long Tall Sally", "a": "Little Richard", "y": 1956, "d": "50s", "g": "Rock"}, {"t": "I Walk the Line", "a": "Johnny Cash", "y": 1956, "d": "50s", "g": "Country"}, {"t": "That'll Be the Day", "a": "Buddy Holly", "y": 1957, "d": "50s", "g": "Rock"}, {"t": "Great Balls of Fire", "a": "Jerry Lee Lewis", "y": 1957, "d": "50s", "g": "Rock"}, {"t": "At the Hop", "a": "Danny & The Juniors", "y": 1957, "d": "50s", "g": "Rock"}, {"t": "Jailhouse Rock", "a": "Elvis Presley", "y": 1957, "d": "50s", "g": "Rock"}, {"t": "All Shook Up", "a": "Elvis Presley", "y": 1957, "d": "50s", "g": "Rock"}, {"t": "Peggy Sue", "a": "Buddy Holly", "y": 1957, "d": "50s", "g": "Rock"}, {"t": "Wake Up Little Susie", "a": "The Everly Brothers", "y": 1957, "d": "50s", "g": "Rock"}, {"t": "Bye Bye Love", "a": "The Everly Brothers", "y": 1957, "d": "50s", "g": "Rock"}, {"t": "Diana", "a": "Paul Anka", "y": 1957, "d": "50s", "g": "Pop"}, {"t": "Whole Lotta Shakin' Goin' On", "a": "Jerry Lee Lewis", "y": 1957, "d": "50s", "g": "Rock"}, {"t": "Walkin' After Midnight", "a": "Patsy Cline", "y": 1957, "d": "50s", "g": "Country"}, {"t": "Johnny B. Goode", "a": "Chuck Berry", "y": 1958, "d": "50s", "g": "Rock"}, {"t": "La Bamba", "a": "Ritchie Valens", "y": 1958, "d": "50s", "g": "Rock"}, {"t": "Sixteen Candles", "a": "The Crests", "y": 1958, "d": "50s", "g": "R&B/Soul"}, {"t": "Yakety Yak", "a": "The Coasters", "y": 1958, "d": "50s", "g": "R&B/Soul"}, {"t": "Get a Job", "a": "The Silhouettes", "y": 1958, "d": "50s", "g": "R&B/Soul"}, {"t": "Splish Splash", "a": "Bobby Darin", "y": 1958, "d": "50s", "g": "Pop"}, {"t": "Volare (Nel Blu Dipinto Di Blu)", "a": "Domenico Modugno", "y": 1958, "d": "50s", "g": "Pop"}, {"t": "Tom Dooley", "a": "The Kingston Trio", "y": 1958, "d": "50s", "g": "Rock"}, {"t": "It's All in the Game", "a": "Tommy Edwards", "y": 1958, "d": "50s", "g": "Pop"}, {"t": "Mack the Knife", "a": "Bobby Darin", "y": 1959, "d": "50s", "g": "Pop"}, {"t": "Venus", "a": "Frankie Avalon", "y": 1959, "d": "50s", "g": "Pop"}, {"t": "Stagger Lee", "a": "Lloyd Price", "y": 1959, "d": "50s", "g": "R&B/Soul"}, {"t": "The Battle of New Orleans", "a": "Johnny Horton", "y": 1959, "d": "50s", "g": "Country"}, {"t": "Lonely Boy", "a": "Paul Anka", "y": 1959, "d": "50s", "g": "Pop"}, {"t": "Kansas City", "a": "Wilbert Harrison", "y": 1959, "d": "50s", "g": "R&B/Soul"}, {"t": "Come Softly to Me", "a": "The Fleetwoods", "y": 1959, "d": "50s", "g": "Pop"}, {"t": "Charlie Brown", "a": "The Coasters", "y": 1959, "d": "50s", "g": "R&B/Soul"}, {"t": "Personality", "a": "Lloyd Price", "y": 1959, "d": "50s", "g": "R&B/Soul"}, {"t": "The Twist", "a": "Chubby Checker", "y": 1960, "d": "60s", "g": "Pop"}, {"t": "Stand By Me", "a": "Ben E. King", "y": 1961, "d": "60s", "g": "R&B/Soul"}, {"t": "Runaround Sue", "a": "Dion", "y": 1961, "d": "60s", "g": "Rock"}, {"t": "Blue Moon", "a": "The Marcels", "y": 1961, "d": "60s", "g": "R&B/Soul"}, {"t": "Crazy", "a": "Patsy Cline", "y": 1961, "d": "60s", "g": "Country"}, {"t": "The Loco-Motion", "a": "Little Eva", "y": 1962, "d": "60s", "g": "R&B/Soul"}, {"t": "Sherry", "a": "The Four Seasons", "y": 1962, "d": "60s", "g": "Pop"}, {"t": "Big Girls Don't Cry", "a": "The Four Seasons", "y": 1962, "d": "60s", "g": "Pop"}, {"t": "James Bond Theme", "a": "Monty Norman", "y": 1962, "d": "60s", "g": "TV & Movie Themes"}, {"t": "Twist and Shout", "a": "The Beatles", "y": 1963, "d": "60s", "g": "Rock"}, {"t": "I Want to Hold Your Hand", "a": "The Beatles", "y": 1963, "d": "60s", "g": "Rock"}, {"t": "Da Doo Ron Ron", "a": "The Crystals", "y": 1963, "d": "60s", "g": "R&B/Soul"}, {"t": "Surfin' U.S.A.", "a": "The Beach Boys", "y": 1963, "d": "60s", "g": "Rock"}, {"t": "He's So Fine", "a": "The Chiffons", "y": 1963, "d": "60s", "g": "R&B/Soul"}, {"t": "Louie Louie", "a": "The Kingsmen", "y": 1963, "d": "60s", "g": "Rock"}, {"t": "The Pink Panther Theme", "a": "Henry Mancini", "y": 1963, "d": "60s", "g": "TV & Movie Themes"}, {"t": "Ring of Fire", "a": "Johnny Cash", "y": 1963, "d": "60s", "g": "Country"}, {"t": "Dancing in the Street", "a": "Martha and the Vandellas", "y": 1964, "d": "60s", "g": "R&B/Soul"}, {"t": "My Girl", "a": "The Temptations", "y": 1964, "d": "60s", "g": "R&B/Soul"}, {"t": "Under the Boardwalk", "a": "The Drifters", "y": 1964, "d": "60s", "g": "R&B/Soul"}, {"t": "She Loves You", "a": "The Beatles", "y": 1964, "d": "60s", "g": "Rock"}, {"t": "Can't Buy Me Love", "a": "The Beatles", "y": 1964, "d": "60s", "g": "Rock"}, {"t": "Oh, Pretty Woman", "a": "Roy Orbison", "y": 1964, "d": "60s", "g": "Rock"}, {"t": "House of the Rising Sun", "a": "The Animals", "y": 1964, "d": "60s", "g": "Rock"}, {"t": "You Really Got Me", "a": "The Kinks", "y": 1964, "d": "60s", "g": "Rock"}, {"t": "California Dreamin'", "a": "The Mamas & the Papas", "y": 1965, "d": "60s", "g": "Rock"}, {"t": "(I Can't Get No) Satisfaction", "a": "The Rolling Stones", "y": 1965, "d": "60s", "g": "Rock"}, {"t": "My Generation", "a": "The Who", "y": 1965, "d": "60s", "g": "Rock"}, {"t": "Help!", "a": "The Beatles", "y": 1965, "d": "60s", "g": "Rock"}, {"t": "Mr. Tambourine Man", "a": "The Byrds", "y": 1965, "d": "60s", "g": "Rock"}, {"t": "I Got You (I Feel Good)", "a": "James Brown", "y": 1965, "d": "60s", "g": "R&B/Soul"}, {"t": "Wooly Bully", "a": "Sam the Sham & the Pharaohs", "y": 1965, "d": "60s", "g": "Rock"}, {"t": "Unchained Melody", "a": "The Righteous Brothers", "y": 1965, "d": "60s", "g": "TV & Movie Themes"}, {"t": "Good Vibrations", "a": "The Beach Boys", "y": 1966, "d": "60s", "g": "Rock"}, {"t": "These Boots Are Made for Walkin'", "a": "Nancy Sinatra", "y": 1966, "d": "60s", "g": "Pop"}, {"t": "Wild Thing", "a": "The Troggs", "y": 1966, "d": "60s", "g": "Rock"}, {"t": "Reach Out I'll Be There", "a": "The Four Tops", "y": 1966, "d": "60s", "g": "R&B/Soul"}, {"t": "Paint It Black", "a": "The Rolling Stones", "y": 1966, "d": "60s", "g": "Rock"}, {"t": "Theme from Mission: Impossible", "a": "Lalo Schifrin", "y": 1966, "d": "60s", "g": "TV & Movie Themes"}, {"t": "Respect", "a": "Aretha Franklin", "y": 1967, "d": "60s", "g": "R&B/Soul"}, {"t": "Light My Fire", "a": "The Doors", "y": 1967, "d": "60s", "g": "Rock"}, {"t": "Somebody to Love", "a": "Jefferson Airplane", "y": 1967, "d": "60s", "g": "Rock"}, {"t": "All You Need Is Love", "a": "The Beatles", "y": 1967, "d": "60s", "g": "Rock"}, {"t": "White Rabbit", "a": "Jefferson Airplane", "y": 1967, "d": "60s", "g": "Rock"}, {"t": "(Sittin' On) The Dock of the Bay", "a": "Otis Redding", "y": 1968, "d": "60s", "g": "R&B/Soul"}, {"t": "I Heard It Through the Grapevine", "a": "Marvin Gaye", "y": 1968, "d": "60s", "g": "R&B/Soul"}, {"t": "Hey Jude", "a": "The Beatles", "y": 1968, "d": "60s", "g": "Rock"}, {"t": "Wichita Lineman", "a": "Glen Campbell", "y": 1968, "d": "60s", "g": "Country"}, {"t": "Stand By Your Man", "a": "Tammy Wynette", "y": 1968, "d": "60s", "g": "Country"}, {"t": "Suspicious Minds", "a": "Elvis Presley", "y": 1969, "d": "60s", "g": "Rock"}, {"t": "Sugar, Sugar", "a": "The Archies", "y": 1969, "d": "60s", "g": "Pop"}, {"t": "Theme from The Brady Bunch", "a": "Frank De Vol", "y": 1969, "d": "60s", "g": "TV & Movie Themes"}, {"t": "Okie from Muskogee", "a": "Merle Haggard", "y": 1969, "d": "60s", "g": "Country"}, {"t": "Bridge Over Troubled Water", "a": "Simon & Garfunkel", "y": 1970, "d": "70s", "g": "Rock"}, {"t": "Let It Be", "a": "The Beatles", "y": 1970, "d": "70s", "g": "Rock"}, {"t": "Ain't No Mountain High Enough", "a": "Diana Ross", "y": 1970, "d": "70s", "g": "R&B/Soul"}, {"t": "American Pie", "a": "Don McLean", "y": 1971, "d": "70s", "g": "Rock"}, {"t": "Stairway to Heaven", "a": "Led Zeppelin", "y": 1971, "d": "70s", "g": "Rock"}, {"t": "Imagine", "a": "John Lennon", "y": 1971, "d": "70s", "g": "Rock"}, {"t": "Maggie May", "a": "Rod Stewart", "y": 1971, "d": "70s", "g": "Rock"}, {"t": "What's Going On", "a": "Marvin Gaye", "y": 1971, "d": "70s", "g": "R&B/Soul"}, {"t": "Brown Sugar", "a": "The Rolling Stones", "y": 1971, "d": "70s", "g": "Rock"}, {"t": "Theme from Shaft", "a": "Isaac Hayes", "y": 1971, "d": "70s", "g": "TV & Movie Themes"}, {"t": "Take Me Home, Country Roads", "a": "John Denver", "y": 1971, "d": "70s", "g": "Country"}, {"t": "Superstition", "a": "Stevie Wonder", "y": 1972, "d": "70s", "g": "R&B/Soul"}, {"t": "Papa Was a Rollin' Stone", "a": "The Temptations", "y": 1972, "d": "70s", "g": "R&B/Soul"}, {"t": "Lean on Me", "a": "Bill Withers", "y": 1972, "d": "70s", "g": "R&B/Soul"}, {"t": "Rocket Man", "a": "Elton John", "y": 1972, "d": "70s", "g": "Pop"}, {"t": "You're So Vain", "a": "Carly Simon", "y": 1972, "d": "70s", "g": "Pop"}, {"t": "Killing Me Softly with His Song", "a": "Roberta Flack", "y": 1973, "d": "70s", "g": "R&B/Soul"}, {"t": "Crocodile Rock", "a": "Elton John", "y": 1973, "d": "70s", "g": "Pop"}, {"t": "Let's Get It On", "a": "Marvin Gaye", "y": 1973, "d": "70s", "g": "R&B/Soul"}, {"t": "The Joker", "a": "Steve Miller Band", "y": 1973, "d": "70s", "g": "Rock"}, {"t": "Band on the Run", "a": "Paul McCartney & Wings", "y": 1973, "d": "70s", "g": "Rock"}, {"t": "Jolene", "a": "Dolly Parton", "y": 1973, "d": "70s", "g": "Country"}, {"t": "Kung Fu Fighting", "a": "Carl Douglas", "y": 1974, "d": "70s", "g": "Disco/Dance"}, {"t": "Rock the Boat", "a": "The Hues Corporation", "y": 1974, "d": "70s", "g": "Disco/Dance"}, {"t": "Bohemian Rhapsody", "a": "Queen", "y": 1975, "d": "70s", "g": "Rock"}, {"t": "Philadelphia Freedom", "a": "Elton John", "y": 1975, "d": "70s", "g": "Pop"}, {"t": "Fame", "a": "David Bowie", "y": 1975, "d": "70s", "g": "Rock"}, {"t": "Love Will Keep Us Together", "a": "Captain & Tennille", "y": 1975, "d": "70s", "g": "Pop"}, {"t": "Movin' On Up (Theme from The Jeffersons)", "a": "Ja'net DuBois", "y": 1975, "d": "70s", "g": "TV & Movie Themes"}, {"t": "Dancing Queen", "a": "ABBA", "y": 1976, "d": "70s", "g": "Pop"}, {"t": "Hotel California", "a": "Eagles", "y": 1976, "d": "70s", "g": "Rock"}, {"t": "Theme from Happy Days", "a": "Pratt & McClain", "y": 1976, "d": "70s", "g": "TV & Movie Themes"}, {"t": "Making Our Dreams Come True (Theme from Laverne & Shirley)", "a": "Cyndi Grecco", "y": 1976, "d": "70s", "g": "TV & Movie Themes"}, {"t": "Gonna Fly Now (Theme from Rocky)", "a": "Bill Conti", "y": 1976, "d": "70s", "g": "TV & Movie Themes"}, {"t": "Stayin' Alive", "a": "Bee Gees", "y": 1977, "d": "70s", "g": "Disco/Dance"}, {"t": "Go Your Own Way", "a": "Fleetwood Mac", "y": 1977, "d": "70s", "g": "Rock"}, {"t": "Dreams", "a": "Fleetwood Mac", "y": 1977, "d": "70s", "g": "Rock"}, {"t": "Sir Duke", "a": "Stevie Wonder", "y": 1977, "d": "70s", "g": "R&B/Soul"}, {"t": "Star Wars (Main Title)", "a": "John Williams", "y": 1977, "d": "70s", "g": "TV & Movie Themes"}, {"t": "Lucille", "a": "Kenny Rogers", "y": 1977, "d": "70s", "g": "Country"}, {"t": "Don't It Make My Brown Eyes Blue", "a": "Crystal Gayle", "y": 1977, "d": "70s", "g": "Country"}, {"t": "Le Freak", "a": "Chic", "y": 1978, "d": "70s", "g": "Disco/Dance"}, {"t": "September", "a": "Earth, Wind & Fire", "y": 1978, "d": "70s", "g": "Disco/Dance"}, {"t": "I Will Survive", "a": "Gloria Gaynor", "y": 1978, "d": "70s", "g": "Disco/Dance"}, {"t": "You're the One That I Want", "a": "John Travolta & Olivia Newton-John", "y": 1978, "d": "70s", "g": "Disco/Dance"}, {"t": "Night Fever", "a": "Bee Gees", "y": 1978, "d": "70s", "g": "Disco/Dance"}, {"t": "Y.M.C.A.", "a": "Village People", "y": 1978, "d": "70s", "g": "Disco/Dance"}, {"t": "Grease", "a": "Frankie Valli", "y": 1978, "d": "70s", "g": "TV & Movie Themes"}, {"t": "Theme from Superman", "a": "John Williams", "y": 1978, "d": "70s", "g": "TV & Movie Themes"}, {"t": "My Sharona", "a": "The Knack", "y": 1979, "d": "70s", "g": "Disco/Dance"}, {"t": "Heart of Glass", "a": "Blondie", "y": 1979, "d": "70s", "g": "Disco/Dance"}, {"t": "Bad Girls", "a": "Donna Summer", "y": 1979, "d": "70s", "g": "Disco/Dance"}, {"t": "The Devil Went Down to Georgia", "a": "Charlie Daniels Band", "y": 1979, "d": "70s", "g": "Country"}, {"t": "Call Me", "a": "Blondie", "y": 1980, "d": "80s", "g": "Disco/Dance"}, {"t": "Another Brick in the Wall (Part 2)", "a": "Pink Floyd", "y": 1980, "d": "80s", "g": "Rock"}, {"t": "9 to 5", "a": "Dolly Parton", "y": 1980, "d": "80s", "g": "Country"}, {"t": "On the Road Again", "a": "Willie Nelson", "y": 1980, "d": "80s", "g": "Country"}, {"t": "Don't Stop Believin'", "a": "Journey", "y": 1981, "d": "80s", "g": "Rock"}, {"t": "Bette Davis Eyes", "a": "Kim Carnes", "y": 1981, "d": "80s", "g": "Pop"}, {"t": "Physical", "a": "Olivia Newton-John", "y": 1981, "d": "80s", "g": "Pop"}, {"t": "Jessie's Girl", "a": "Rick Springfield", "y": 1981, "d": "80s", "g": "Rock"}, {"t": "Believe It or Not (Theme from The Greatest American Hero)", "a": "Joey Scarbury", "y": 1981, "d": "80s", "g": "TV & Movie Themes"}, {"t": "Beat It", "a": "Michael Jackson", "y": 1982, "d": "80s", "g": "Pop"}, {"t": "Africa", "a": "Toto", "y": 1982, "d": "80s", "g": "Rock"}, {"t": "I Love Rock 'N Roll", "a": "Joan Jett & the Blackhearts", "y": 1982, "d": "80s", "g": "Rock"}, {"t": "Eye of the Tiger", "a": "Survivor", "y": 1982, "d": "80s", "g": "Rock"}, {"t": "Come On Eileen", "a": "Dexys Midnight Runners", "y": 1982, "d": "80s", "g": "Pop"}, {"t": "Where Everybody Knows Your Name (Theme from Cheers)", "a": "Gary Portnoy", "y": 1982, "d": "80s", "g": "TV & Movie Themes"}, {"t": "Billie Jean", "a": "Michael Jackson", "y": 1983, "d": "80s", "g": "Pop"}, {"t": "Every Breath You Take", "a": "The Police", "y": 1983, "d": "80s", "g": "Rock"}, {"t": "Sweet Dreams (Are Made of This)", "a": "Eurythmics", "y": 1983, "d": "80s", "g": "Pop"}, {"t": "Girls Just Want to Have Fun", "a": "Cyndi Lauper", "y": 1983, "d": "80s", "g": "Pop"}, {"t": "Karma Chameleon", "a": "Culture Club", "y": 1983, "d": "80s", "g": "Pop"}, {"t": "Flashdance... What a Feeling", "a": "Irene Cara", "y": 1983, "d": "80s", "g": "Pop"}, {"t": "Total Eclipse of the Heart", "a": "Bonnie Tyler", "y": 1983, "d": "80s", "g": "Pop"}, {"t": "Amarillo by Morning", "a": "George Strait", "y": 1983, "d": "80s", "g": "Country"}, {"t": "Islands in the Stream", "a": "Kenny Rogers & Dolly Parton", "y": 1983, "d": "80s", "g": "Country"}, {"t": "Dixieland Delight", "a": "Alabama", "y": 1983, "d": "80s", "g": "Country"}, {"t": "Like a Virgin", "a": "Madonna", "y": 1984, "d": "80s", "g": "Pop"}, {"t": "Wake Me Up Before You Go-Go", "a": "Wham!", "y": 1984, "d": "80s", "g": "Pop"}, {"t": "When Doves Cry", "a": "Prince", "y": 1984, "d": "80s", "g": "R&B/Soul"}, {"t": "Footloose", "a": "Kenny Loggins", "y": 1984, "d": "80s", "g": "Pop"}, {"t": "I Want to Know What Love Is", "a": "Foreigner", "y": 1984, "d": "80s", "g": "Rock"}, {"t": "Why Not Me", "a": "The Judds", "y": 1984, "d": "80s", "g": "Country"}, {"t": "Take On Me", "a": "a-ha", "y": 1985, "d": "80s", "g": "Pop"}, {"t": "We Are the World", "a": "USA for Africa", "y": 1985, "d": "80s", "g": "Pop"}, {"t": "Money for Nothing", "a": "Dire Straits", "y": 1985, "d": "80s", "g": "Rock"}, {"t": "Miami Vice Theme", "a": "Jan Hammer", "y": 1985, "d": "80s", "g": "TV & Movie Themes"}, {"t": "Livin' on a Prayer", "a": "Bon Jovi", "y": 1986, "d": "80s", "g": "Rock"}, {"t": "Papa Don't Preach", "a": "Madonna", "y": 1986, "d": "80s", "g": "Pop"}, {"t": "Walk Like an Egyptian", "a": "The Bangles", "y": 1986, "d": "80s", "g": "Pop"}, {"t": "Danger Zone", "a": "Kenny Loggins", "y": 1986, "d": "80s", "g": "TV & Movie Themes"}, {"t": "Take My Breath Away", "a": "Berlin", "y": 1986, "d": "80s", "g": "TV & Movie Themes"}, {"t": "Whoever's in New England", "a": "Reba McEntire", "y": 1986, "d": "80s", "g": "Country"}, {"t": "Sweet Child O' Mine", "a": "Guns N' Roses", "y": 1987, "d": "80s", "g": "Rock"}, {"t": "With or Without You", "a": "U2", "y": 1987, "d": "80s", "g": "Rock"}, {"t": "Faith", "a": "George Michael", "y": 1987, "d": "80s", "g": "Pop"}, {"t": "Never Gonna Give You Up", "a": "Rick Astley", "y": 1987, "d": "80s", "g": "Pop"}, {"t": "Forever and Ever, Amen", "a": "Randy Travis", "y": 1987, "d": "80s", "g": "Country"}, {"t": "Pour Some Sugar on Me", "a": "Def Leppard", "y": 1988, "d": "80s", "g": "Rock"}, {"t": "Kokomo", "a": "The Beach Boys", "y": 1988, "d": "80s", "g": "Rock"}, {"t": "Theme from Full House", "a": "Jesse Frederick", "y": 1988, "d": "80s", "g": "TV & Movie Themes"}, {"t": "Like a Prayer", "a": "Madonna", "y": 1989, "d": "80s", "g": "Pop"}, {"t": "The Simpsons Theme", "a": "Danny Elfman", "y": 1989, "d": "80s", "g": "TV & Movie Themes"}, {"t": "Theme from Seinfeld", "a": "Jonathan Wolff", "y": 1989, "d": "80s", "g": "TV & Movie Themes"}, {"t": "Vogue", "a": "Madonna", "y": 1990, "d": "90s", "g": "Pop"}, {"t": "Ice Ice Baby", "a": "Vanilla Ice", "y": 1990, "d": "90s", "g": "Hip-Hop/Rap"}, {"t": "Theme from Law & Order", "a": "Mike Post", "y": 1990, "d": "90s", "g": "TV & Movie Themes"}, {"t": "Theme from The Fresh Prince of Bel-Air", "a": "Will Smith", "y": 1990, "d": "90s", "g": "TV & Movie Themes"}, {"t": "Friends in Low Places", "a": "Garth Brooks", "y": 1990, "d": "90s", "g": "Country"}, {"t": "Losing My Religion", "a": "R.E.M.", "y": 1991, "d": "90s", "g": "Alternative/Grunge"}, {"t": "Smells Like Teen Spirit", "a": "Nirvana", "y": 1991, "d": "90s", "g": "Alternative/Grunge"}, {"t": "Black or White", "a": "Michael Jackson", "y": 1991, "d": "90s", "g": "Pop"}, {"t": "(Everything I Do) I Do It for You", "a": "Bryan Adams", "y": 1991, "d": "90s", "g": "TV & Movie Themes"}, {"t": "Under the Bridge", "a": "Red Hot Chili Peppers", "y": 1992, "d": "90s", "g": "Alternative/Grunge"}, {"t": "I Will Always Love You", "a": "Whitney Houston", "y": 1992, "d": "90s", "g": "R&B/Soul"}, {"t": "Baby Got Back", "a": "Sir Mix-a-Lot", "y": 1992, "d": "90s", "g": "Hip-Hop/Rap"}, {"t": "Achy Breaky Heart", "a": "Billy Ray Cyrus", "y": 1992, "d": "90s", "g": "Country"}, {"t": "Boot Scootin' Boogie", "a": "Brooks & Dunn", "y": 1992, "d": "90s", "g": "Country"}, {"t": "Creep", "a": "Radiohead", "y": 1993, "d": "90s", "g": "Alternative/Grunge"}, {"t": "All That She Wants", "a": "Ace of Base", "y": 1993, "d": "90s", "g": "Pop"}, {"t": "Theme from The X-Files", "a": "Mark Snow", "y": 1993, "d": "90s", "g": "TV & Movie Themes"}, {"t": "Chattahoochee", "a": "Alan Jackson", "y": 1993, "d": "90s", "g": "Country"}, {"t": "Waterfalls", "a": "TLC", "y": 1994, "d": "90s", "g": "R&B/Soul"}, {"t": "The Sign", "a": "Ace of Base", "y": 1994, "d": "90s", "g": "Pop"}, {"t": "Don't Take the Girl", "a": "Tim McGraw", "y": 1994, "d": "90s", "g": "Country"}, {"t": "Wonderwall", "a": "Oasis", "y": 1995, "d": "90s", "g": "Alternative/Grunge"}, {"t": "Gangsta's Paradise", "a": "Coolio ft. L.V.", "y": 1995, "d": "90s", "g": "Hip-Hop/Rap"}, {"t": "Kiss From a Rose", "a": "Seal", "y": 1995, "d": "90s", "g": "Pop"}, {"t": "I'll Be There for You (Theme from Friends)", "a": "The Rembrandts", "y": 1995, "d": "90s", "g": "TV & Movie Themes"}, {"t": "Any Man of Mine", "a": "Shania Twain", "y": 1995, "d": "90s", "g": "Country"}, {"t": "Wannabe", "a": "Spice Girls", "y": 1996, "d": "90s", "g": "Pop"}, {"t": "Macarena", "a": "Los Del Rio", "y": 1996, "d": "90s", "g": "Pop"}, {"t": "MMMBop", "a": "Hanson", "y": 1997, "d": "90s", "g": "Pop"}, {"t": "Torn", "a": "Natalie Imbruglia", "y": 1997, "d": "90s", "g": "Pop"}, {"t": "Barbie Girl", "a": "Aqua", "y": 1997, "d": "90s", "g": "Pop"}, {"t": "Bitter Sweet Symphony", "a": "The Verve", "y": 1997, "d": "90s", "g": "Alternative/Grunge"}, {"t": "I'll Be Missing You", "a": "Puff Daddy ft. Faith Evans & 112", "y": 1997, "d": "90s", "g": "Hip-Hop/Rap"}, {"t": "...Baby One More Time", "a": "Britney Spears", "y": 1998, "d": "90s", "g": "Pop"}, {"t": "My Heart Will Go On", "a": "Celine Dion", "y": 1998, "d": "90s", "g": "Pop"}, {"t": "Believe", "a": "Cher", "y": 1998, "d": "90s", "g": "Pop"}, {"t": "Doo Wop (That Thing)", "a": "Lauryn Hill", "y": 1998, "d": "90s", "g": "Hip-Hop/Rap"}, {"t": "This Kiss", "a": "Faith Hill", "y": 1998, "d": "90s", "g": "Country"}, {"t": "You're Still the One", "a": "Shania Twain", "y": 1998, "d": "90s", "g": "Country"}, {"t": "Wide Open Spaces", "a": "Dixie Chicks", "y": 1998, "d": "90s", "g": "Country"}, {"t": "No Scrubs", "a": "TLC", "y": 1999, "d": "90s", "g": "R&B/Soul"}, {"t": "I Want It That Way", "a": "Backstreet Boys", "y": 1999, "d": "90s", "g": "Pop"}, {"t": "Genie in a Bottle", "a": "Christina Aguilera", "y": 1999, "d": "90s", "g": "Pop"}, {"t": "Livin' la Vida Loca", "a": "Ricky Martin", "y": 1999, "d": "90s", "g": "Pop"}, {"t": "Smooth", "a": "Santana ft. Rob Thomas", "y": 1999, "d": "90s", "g": "Rock"}, {"t": "Man! I Feel Like a Woman", "a": "Shania Twain", "y": 1999, "d": "90s", "g": "Country"}, {"t": "Theme from SpongeBob SquarePants", "a": "Various Artists", "y": 1999, "d": "90s", "g": "TV & Movie Themes"}, {"t": "Woke Up This Morning (Theme from The Sopranos)", "a": "Alabama 3", "y": 1999, "d": "90s", "g": "TV & Movie Themes"}, {"t": "Oops!... I Did It Again", "a": "Britney Spears", "y": 2000, "d": "2000s", "g": "Pop"}, {"t": "Bye Bye Bye", "a": "NSYNC", "y": 2000, "d": "2000s", "g": "Pop"}, {"t": "Say My Name", "a": "Destiny's Child", "y": 2000, "d": "2000s", "g": "R&B/Soul"}, {"t": "Beautiful Day", "a": "U2", "y": 2000, "d": "2000s", "g": "Rock"}, {"t": "Fallin'", "a": "Alicia Keys", "y": 2001, "d": "2000s", "g": "R&B/Soul"}, {"t": "Get the Party Started", "a": "Pink", "y": 2001, "d": "2000s", "g": "Pop"}, {"t": "In the End", "a": "Linkin Park", "y": 2001, "d": "2000s", "g": "Alternative/Grunge"}, {"t": "Complicated", "a": "Avril Lavigne", "y": 2002, "d": "2000s", "g": "Pop"}, {"t": "Hot in Herre", "a": "Nelly", "y": 2002, "d": "2000s", "g": "Hip-Hop/Rap"}, {"t": "Dilemma", "a": "Nelly ft. Kelly Rowland", "y": 2002, "d": "2000s", "g": "Hip-Hop/Rap"}, {"t": "Lose Yourself", "a": "Eminem", "y": 2002, "d": "2000s", "g": "Hip-Hop/Rap"}, {"t": "Beautiful", "a": "Christina Aguilera", "y": 2002, "d": "2000s", "g": "Pop"}, {"t": "Courtesy of the Red, White and Blue", "a": "Toby Keith", "y": 2002, "d": "2000s", "g": "Country"}, {"t": "Somebody Like You", "a": "Keith Urban", "y": 2002, "d": "2000s", "g": "Country"}, {"t": "No Shoes, No Shirt, No Problems", "a": "Kenny Chesney", "y": 2002, "d": "2000s", "g": "Country"}, {"t": "Hey Ya!", "a": "OutKast", "y": 2003, "d": "2000s", "g": "Hip-Hop/Rap"}, {"t": "Crazy in Love", "a": "Beyoncé ft. Jay-Z", "y": 2003, "d": "2000s", "g": "R&B/Soul"}, {"t": "Toxic", "a": "Britney Spears", "y": 2003, "d": "2000s", "g": "Pop"}, {"t": "In Da Club", "a": "50 Cent", "y": 2003, "d": "2000s", "g": "Hip-Hop/Rap"}, {"t": "Mr. Brightside", "a": "The Killers", "y": 2003, "d": "2000s", "g": "Alternative/Grunge"}, {"t": "Bring Me to Life", "a": "Evanescence", "y": 2003, "d": "2000s", "g": "Alternative/Grunge"}, {"t": "Milkshake", "a": "Kelis", "y": 2003, "d": "2000s", "g": "R&B/Soul"}, {"t": "Seven Nation Army", "a": "The White Stripes", "y": 2003, "d": "2000s", "g": "Alternative/Grunge"}, {"t": "Since U Been Gone", "a": "Kelly Clarkson", "y": 2004, "d": "2000s", "g": "Pop"}, {"t": "Boulevard of Broken Dreams", "a": "Green Day", "y": 2004, "d": "2000s", "g": "Alternative/Grunge"}, {"t": "Yeah!", "a": "Usher ft. Lil Jon & Ludacris", "y": 2004, "d": "2000s", "g": "R&B/Soul"}, {"t": "Baby Girl", "a": "Sugarland", "y": 2004, "d": "2000s", "g": "Country"}, {"t": "Save a Horse (Ride a Cowboy)", "a": "Big & Rich", "y": 2004, "d": "2000s", "g": "Country"}, {"t": "Whiskey Lullaby", "a": "Brad Paisley ft. Alison Krauss", "y": 2004, "d": "2000s", "g": "Country"}, {"t": "Hollaback Girl", "a": "Gwen Stefani", "y": 2005, "d": "2000s", "g": "Pop"}, {"t": "Gold Digger", "a": "Kanye West ft. Jamie Foxx", "y": 2005, "d": "2000s", "g": "Hip-Hop/Rap"}, {"t": "Feel Good Inc.", "a": "Gorillaz", "y": 2005, "d": "2000s", "g": "Alternative/Grunge"}, {"t": "Theme from The Office", "a": "Jay Ferguson", "y": 2005, "d": "2000s", "g": "TV & Movie Themes"}, {"t": "Jesus, Take the Wheel", "a": "Carrie Underwood", "y": 2005, "d": "2000s", "g": "Country"}, {"t": "SexyBack", "a": "Justin Timberlake", "y": 2006, "d": "2000s", "g": "Pop"}, {"t": "SOS", "a": "Rihanna", "y": 2006, "d": "2000s", "g": "R&B/Soul"}, {"t": "Crazy", "a": "Gnarls Barkley", "y": 2006, "d": "2000s", "g": "Alternative/Grunge"}, {"t": "Irreplaceable", "a": "Beyoncé", "y": 2006, "d": "2000s", "g": "R&B/Soul"}, {"t": "Life Is a Highway", "a": "Rascal Flatts", "y": 2006, "d": "2000s", "g": "Country"}, {"t": "Tim McGraw", "a": "Taylor Swift", "y": 2006, "d": "2000s", "g": "Country"}, {"t": "Umbrella", "a": "Rihanna ft. Jay-Z", "y": 2007, "d": "2000s", "g": "R&B/Soul"}, {"t": "Apologize", "a": "OneRepublic ft. Timbaland", "y": 2007, "d": "2000s", "g": "Pop"}, {"t": "Just Dance", "a": "Lady Gaga", "y": 2008, "d": "2000s", "g": "Pop"}, {"t": "Low", "a": "Flo Rida ft. T-Pain", "y": 2008, "d": "2000s", "g": "Hip-Hop/Rap"}, {"t": "Viva la Vida", "a": "Coldplay", "y": 2008, "d": "2000s", "g": "Alternative/Grunge"}, {"t": "I Kissed a Girl", "a": "Katy Perry", "y": 2008, "d": "2000s", "g": "Pop"}, {"t": "Poker Face", "a": "Lady Gaga", "y": 2008, "d": "2000s", "g": "Pop"}];
+const DECADE_CLASS = {"50s":"d50","60s":"d60","70s":"d70","80s":"d80","90s":"d90","2000s":"d00"};
+const ALL_DECADES = ["50s","60s","70s","80s","90s","2000s"];
+let selectedDecades = new Set(ALL_DECADES);
+
+const ALL_GENRES = ["Rock","Pop","R&B/Soul","Hip-Hop/Rap","Country","Disco/Dance","Alternative/Grunge","TV & Movie Themes"];
+let selectedGenres = new Set(ALL_GENRES);
+
+/* ---------- base64url helpers (unicode-safe) ---------- */
+function b64urlEncode(str){
+  const b64 = btoa(unescape(encodeURIComponent(str)));
+  return b64.replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+}
+function b64urlDecode(str){
+  str = str.replace(/-/g,'+').replace(/_/g,'/');
+  while(str.length % 4){ str += '='; }
+  return decodeURIComponent(escape(atob(str)));
+}
+function encodeCard(cardNum, roundsOfIndices){
+  return b64urlEncode(JSON.stringify({n:cardNum, r:roundsOfIndices}));
+}
+function decodeCard(str){
+  return JSON.parse(b64urlDecode(str));
+}
+
+/* ---------- QR rendering (bundled qrcode-generator, MIT license) ---------- */
+//---------------------------------------------------------------------
+//
+// QR Code Generator for JavaScript
+//
+// Copyright (c) 2009 Kazuhiko Arase
+//
+// URL: http://www.d-project.com/
+//
+// Licensed under the MIT license:
+//  http://www.opensource.org/licenses/mit-license.php
+//
+// The word 'QR Code' is registered trademark of
+// DENSO WAVE INCORPORATED
+//  http://www.denso-wave.com/qrcode/faqpatent-e.html
+//
+//---------------------------------------------------------------------
+
+var qrcode = function() {
+
+  //---------------------------------------------------------------------
+  // qrcode
+  //---------------------------------------------------------------------
+
+  /**
+   * qrcode
+   * @param typeNumber 1 to 40
+   * @param errorCorrectionLevel 'L','M','Q','H'
+   */
+  var qrcode = function(typeNumber, errorCorrectionLevel) {
+
+    var PAD0 = 0xEC;
+    var PAD1 = 0x11;
+
+    var _typeNumber = typeNumber;
+    var _errorCorrectionLevel = QRErrorCorrectionLevel[errorCorrectionLevel];
+    var _modules = null;
+    var _moduleCount = 0;
+    var _dataCache = null;
+    var _dataList = [];
+
+    var _this = {};
+
+    var makeImpl = function(test, maskPattern) {
+
+      _moduleCount = _typeNumber * 4 + 17;
+      _modules = function(moduleCount) {
+        var modules = new Array(moduleCount);
+        for (var row = 0; row < moduleCount; row += 1) {
+          modules[row] = new Array(moduleCount);
+          for (var col = 0; col < moduleCount; col += 1) {
+            modules[row][col] = null;
+          }
+        }
+        return modules;
+      }(_moduleCount);
+
+      setupPositionProbePattern(0, 0);
+      setupPositionProbePattern(_moduleCount - 7, 0);
+      setupPositionProbePattern(0, _moduleCount - 7);
+      setupPositionAdjustPattern();
+      setupTimingPattern();
+      setupTypeInfo(test, maskPattern);
+
+      if (_typeNumber >= 7) {
+        setupTypeNumber(test);
+      }
+
+      if (_dataCache == null) {
+        _dataCache = createData(_typeNumber, _errorCorrectionLevel, _dataList);
+      }
+
+      mapData(_dataCache, maskPattern);
+    };
+
+    var setupPositionProbePattern = function(row, col) {
+
+      for (var r = -1; r <= 7; r += 1) {
+
+        if (row + r <= -1 || _moduleCount <= row + r) continue;
+
+        for (var c = -1; c <= 7; c += 1) {
+
+          if (col + c <= -1 || _moduleCount <= col + c) continue;
+
+          if ( (0 <= r && r <= 6 && (c == 0 || c == 6) )
+              || (0 <= c && c <= 6 && (r == 0 || r == 6) )
+              || (2 <= r && r <= 4 && 2 <= c && c <= 4) ) {
+            _modules[row + r][col + c] = true;
+          } else {
+            _modules[row + r][col + c] = false;
+          }
+        }
+      }
+    };
+
+    var getBestMaskPattern = function() {
+
+      var minLostPoint = 0;
+      var pattern = 0;
+
+      for (var i = 0; i < 8; i += 1) {
+
+        makeImpl(true, i);
+
+        var lostPoint = QRUtil.getLostPoint(_this);
+
+        if (i == 0 || minLostPoint > lostPoint) {
+          minLostPoint = lostPoint;
+          pattern = i;
+        }
+      }
+
+      return pattern;
+    };
+
+    var setupTimingPattern = function() {
+
+      for (var r = 8; r < _moduleCount - 8; r += 1) {
+        if (_modules[r][6] != null) {
+          continue;
+        }
+        _modules[r][6] = (r % 2 == 0);
+      }
+
+      for (var c = 8; c < _moduleCount - 8; c += 1) {
+        if (_modules[6][c] != null) {
+          continue;
+        }
+        _modules[6][c] = (c % 2 == 0);
+      }
+    };
+
+    var setupPositionAdjustPattern = function() {
+
+      var pos = QRUtil.getPatternPosition(_typeNumber);
+
+      for (var i = 0; i < pos.length; i += 1) {
+
+        for (var j = 0; j < pos.length; j += 1) {
+
+          var row = pos[i];
+          var col = pos[j];
+
+          if (_modules[row][col] != null) {
+            continue;
+          }
+
+          for (var r = -2; r <= 2; r += 1) {
+
+            for (var c = -2; c <= 2; c += 1) {
+
+              if (r == -2 || r == 2 || c == -2 || c == 2
+                  || (r == 0 && c == 0) ) {
+                _modules[row + r][col + c] = true;
+              } else {
+                _modules[row + r][col + c] = false;
+              }
+            }
+          }
+        }
+      }
+    };
+
+    var setupTypeNumber = function(test) {
+
+      var bits = QRUtil.getBCHTypeNumber(_typeNumber);
+
+      for (var i = 0; i < 18; i += 1) {
+        var mod = (!test && ( (bits >> i) & 1) == 1);
+        _modules[Math.floor(i / 3)][i % 3 + _moduleCount - 8 - 3] = mod;
+      }
+
+      for (var i = 0; i < 18; i += 1) {
+        var mod = (!test && ( (bits >> i) & 1) == 1);
+        _modules[i % 3 + _moduleCount - 8 - 3][Math.floor(i / 3)] = mod;
+      }
+    };
+
+    var setupTypeInfo = function(test, maskPattern) {
+
+      var data = (_errorCorrectionLevel << 3) | maskPattern;
+      var bits = QRUtil.getBCHTypeInfo(data);
+
+      // vertical
+      for (var i = 0; i < 15; i += 1) {
+
+        var mod = (!test && ( (bits >> i) & 1) == 1);
+
+        if (i < 6) {
+          _modules[i][8] = mod;
+        } else if (i < 8) {
+          _modules[i + 1][8] = mod;
+        } else {
+          _modules[_moduleCount - 15 + i][8] = mod;
+        }
+      }
+
+      // horizontal
+      for (var i = 0; i < 15; i += 1) {
+
+        var mod = (!test && ( (bits >> i) & 1) == 1);
+
+        if (i < 8) {
+          _modules[8][_moduleCount - i - 1] = mod;
+        } else if (i < 9) {
+          _modules[8][15 - i - 1 + 1] = mod;
+        } else {
+          _modules[8][15 - i - 1] = mod;
+        }
+      }
+
+      // fixed module
+      _modules[_moduleCount - 8][8] = (!test);
+    };
+
+    var mapData = function(data, maskPattern) {
+
+      var inc = -1;
+      var row = _moduleCount - 1;
+      var bitIndex = 7;
+      var byteIndex = 0;
+      var maskFunc = QRUtil.getMaskFunction(maskPattern);
+
+      for (var col = _moduleCount - 1; col > 0; col -= 2) {
+
+        if (col == 6) col -= 1;
+
+        while (true) {
+
+          for (var c = 0; c < 2; c += 1) {
+
+            if (_modules[row][col - c] == null) {
+
+              var dark = false;
+
+              if (byteIndex < data.length) {
+                dark = ( ( (data[byteIndex] >>> bitIndex) & 1) == 1);
+              }
+
+              var mask = maskFunc(row, col - c);
+
+              if (mask) {
+                dark = !dark;
+              }
+
+              _modules[row][col - c] = dark;
+              bitIndex -= 1;
+
+              if (bitIndex == -1) {
+                byteIndex += 1;
+                bitIndex = 7;
+              }
+            }
+          }
+
+          row += inc;
+
+          if (row < 0 || _moduleCount <= row) {
+            row -= inc;
+            inc = -inc;
+            break;
+          }
+        }
+      }
+    };
+
+    var createBytes = function(buffer, rsBlocks) {
+
+      var offset = 0;
+
+      var maxDcCount = 0;
+      var maxEcCount = 0;
+
+      var dcdata = new Array(rsBlocks.length);
+      var ecdata = new Array(rsBlocks.length);
+
+      for (var r = 0; r < rsBlocks.length; r += 1) {
+
+        var dcCount = rsBlocks[r].dataCount;
+        var ecCount = rsBlocks[r].totalCount - dcCount;
+
+        maxDcCount = Math.max(maxDcCount, dcCount);
+        maxEcCount = Math.max(maxEcCount, ecCount);
+
+        dcdata[r] = new Array(dcCount);
+
+        for (var i = 0; i < dcdata[r].length; i += 1) {
+          dcdata[r][i] = 0xff & buffer.getBuffer()[i + offset];
+        }
+        offset += dcCount;
+
+        var rsPoly = QRUtil.getErrorCorrectPolynomial(ecCount);
+        var rawPoly = qrPolynomial(dcdata[r], rsPoly.getLength() - 1);
+
+        var modPoly = rawPoly.mod(rsPoly);
+        ecdata[r] = new Array(rsPoly.getLength() - 1);
+        for (var i = 0; i < ecdata[r].length; i += 1) {
+          var modIndex = i + modPoly.getLength() - ecdata[r].length;
+          ecdata[r][i] = (modIndex >= 0)? modPoly.getAt(modIndex) : 0;
+        }
+      }
+
+      var totalCodeCount = 0;
+      for (var i = 0; i < rsBlocks.length; i += 1) {
+        totalCodeCount += rsBlocks[i].totalCount;
+      }
+
+      var data = new Array(totalCodeCount);
+      var index = 0;
+
+      for (var i = 0; i < maxDcCount; i += 1) {
+        for (var r = 0; r < rsBlocks.length; r += 1) {
+          if (i < dcdata[r].length) {
+            data[index] = dcdata[r][i];
+            index += 1;
+          }
+        }
+      }
+
+      for (var i = 0; i < maxEcCount; i += 1) {
+        for (var r = 0; r < rsBlocks.length; r += 1) {
+          if (i < ecdata[r].length) {
+            data[index] = ecdata[r][i];
+            index += 1;
+          }
+        }
+      }
+
+      return data;
+    };
+
+    var createData = function(typeNumber, errorCorrectionLevel, dataList) {
+
+      var rsBlocks = QRRSBlock.getRSBlocks(typeNumber, errorCorrectionLevel);
+
+      var buffer = qrBitBuffer();
+
+      for (var i = 0; i < dataList.length; i += 1) {
+        var data = dataList[i];
+        buffer.put(data.getMode(), 4);
+        buffer.put(data.getLength(), QRUtil.getLengthInBits(data.getMode(), typeNumber) );
+        data.write(buffer);
+      }
+
+      // calc num max data.
+      var totalDataCount = 0;
+      for (var i = 0; i < rsBlocks.length; i += 1) {
+        totalDataCount += rsBlocks[i].dataCount;
+      }
+
+      if (buffer.getLengthInBits() > totalDataCount * 8) {
+        throw 'code length overflow. ('
+          + buffer.getLengthInBits()
+          + '>'
+          + totalDataCount * 8
+          + ')';
+      }
+
+      // end code
+      if (buffer.getLengthInBits() + 4 <= totalDataCount * 8) {
+        buffer.put(0, 4);
+      }
+
+      // padding
+      while (buffer.getLengthInBits() % 8 != 0) {
+        buffer.putBit(false);
+      }
+
+      // padding
+      while (true) {
+
+        if (buffer.getLengthInBits() >= totalDataCount * 8) {
+          break;
+        }
+        buffer.put(PAD0, 8);
+
+        if (buffer.getLengthInBits() >= totalDataCount * 8) {
+          break;
+        }
+        buffer.put(PAD1, 8);
+      }
+
+      return createBytes(buffer, rsBlocks);
+    };
+
+    _this.addData = function(data, mode) {
+
+      mode = mode || 'Byte';
+
+      var newData = null;
+
+      switch(mode) {
+      case 'Numeric' :
+        newData = qrNumber(data);
+        break;
+      case 'Alphanumeric' :
+        newData = qrAlphaNum(data);
+        break;
+      case 'Byte' :
+        newData = qr8BitByte(data);
+        break;
+      case 'Kanji' :
+        newData = qrKanji(data);
+        break;
+      default :
+        throw 'mode:' + mode;
+      }
+
+      _dataList.push(newData);
+      _dataCache = null;
+    };
+
+    _this.isDark = function(row, col) {
+      if (row < 0 || _moduleCount <= row || col < 0 || _moduleCount <= col) {
+        throw row + ',' + col;
+      }
+      return _modules[row][col];
+    };
+
+    _this.getModuleCount = function() {
+      return _moduleCount;
+    };
+
+    _this.make = function() {
+      if (_typeNumber < 1) {
+        var typeNumber = 1;
+
+        for (; typeNumber < 40; typeNumber++) {
+          var rsBlocks = QRRSBlock.getRSBlocks(typeNumber, _errorCorrectionLevel);
+          var buffer = qrBitBuffer();
+
+          for (var i = 0; i < _dataList.length; i++) {
+            var data = _dataList[i];
+            buffer.put(data.getMode(), 4);
+            buffer.put(data.getLength(), QRUtil.getLengthInBits(data.getMode(), typeNumber) );
+            data.write(buffer);
+          }
+
+          var totalDataCount = 0;
+          for (var i = 0; i < rsBlocks.length; i++) {
+            totalDataCount += rsBlocks[i].dataCount;
+          }
+
+          if (buffer.getLengthInBits() <= totalDataCount * 8) {
+            break;
+          }
+        }
+
+        _typeNumber = typeNumber;
+      }
+
+      makeImpl(false, getBestMaskPattern() );
+    };
+
+    _this.createTableTag = function(cellSize, margin) {
+
+      cellSize = cellSize || 2;
+      margin = (typeof margin == 'undefined')? cellSize * 4 : margin;
+
+      var qrHtml = '';
+
+      qrHtml += '<table style="';
+      qrHtml += ' border-width: 0px; border-style: none;';
+      qrHtml += ' border-collapse: collapse;';
+      qrHtml += ' padding: 0px; margin: ' + margin + 'px;';
+      qrHtml += '">';
+      qrHtml += '<tbody>';
+
+      for (var r = 0; r < _this.getModuleCount(); r += 1) {
+
+        qrHtml += '<tr>';
+
+        for (var c = 0; c < _this.getModuleCount(); c += 1) {
+          qrHtml += '<td style="';
+          qrHtml += ' border-width: 0px; border-style: none;';
+          qrHtml += ' border-collapse: collapse;';
+          qrHtml += ' padding: 0px; margin: 0px;';
+          qrHtml += ' width: ' + cellSize + 'px;';
+          qrHtml += ' height: ' + cellSize + 'px;';
+          qrHtml += ' background-color: ';
+          qrHtml += _this.isDark(r, c)? '#000000' : '#ffffff';
+          qrHtml += ';';
+          qrHtml += '"/>';
+        }
+
+        qrHtml += '</tr>';
+      }
+
+      qrHtml += '</tbody>';
+      qrHtml += '</table>';
+
+      return qrHtml;
+    };
+
+    _this.createSvgTag = function(cellSize, margin, alt, title) {
+
+      var opts = {};
+      if (typeof arguments[0] == 'object') {
+        // Called by options.
+        opts = arguments[0];
+        // overwrite cellSize and margin.
+        cellSize = opts.cellSize;
+        margin = opts.margin;
+        alt = opts.alt;
+        title = opts.title;
+      }
+
+      cellSize = cellSize || 2;
+      margin = (typeof margin == 'undefined')? cellSize * 4 : margin;
+
+      // Compose alt property surrogate
+      alt = (typeof alt === 'string') ? {text: alt} : alt || {};
+      alt.text = alt.text || null;
+      alt.id = (alt.text) ? alt.id || 'qrcode-description' : null;
+
+      // Compose title property surrogate
+      title = (typeof title === 'string') ? {text: title} : title || {};
+      title.text = title.text || null;
+      title.id = (title.text) ? title.id || 'qrcode-title' : null;
+
+      var size = _this.getModuleCount() * cellSize + margin * 2;
+      var c, mc, r, mr, qrSvg='', rect;
+
+      rect = 'l' + cellSize + ',0 0,' + cellSize +
+        ' -' + cellSize + ',0 0,-' + cellSize + 'z ';
+
+      qrSvg += '<svg version="1.1" xmlns="http://www.w3.org/2000/svg"';
+      qrSvg += !opts.scalable ? ' width="' + size + 'px" height="' + size + 'px"' : '';
+      qrSvg += ' viewBox="0 0 ' + size + ' ' + size + '" ';
+      qrSvg += ' preserveAspectRatio="xMinYMin meet"';
+      qrSvg += (title.text || alt.text) ? ' role="img" aria-labelledby="' +
+          escapeXml([title.id, alt.id].join(' ').trim() ) + '"' : '';
+      qrSvg += '>';
+      qrSvg += (title.text) ? '<title id="' + escapeXml(title.id) + '">' +
+          escapeXml(title.text) + '</title>' : '';
+      qrSvg += (alt.text) ? '<description id="' + escapeXml(alt.id) + '">' +
+          escapeXml(alt.text) + '</description>' : '';
+      qrSvg += '<rect width="100%" height="100%" fill="white" cx="0" cy="0"/>';
+      qrSvg += '<path d="';
+
+      for (r = 0; r < _this.getModuleCount(); r += 1) {
+        mr = r * cellSize + margin;
+        for (c = 0; c < _this.getModuleCount(); c += 1) {
+          if (_this.isDark(r, c) ) {
+            mc = c*cellSize+margin;
+            qrSvg += 'M' + mc + ',' + mr + rect;
+          }
+        }
+      }
+
+      qrSvg += '" stroke="transparent" fill="black"/>';
+      qrSvg += '</svg>';
+
+      return qrSvg;
+    };
+
+    _this.createDataURL = function(cellSize, margin) {
+
+      cellSize = cellSize || 2;
+      margin = (typeof margin == 'undefined')? cellSize * 4 : margin;
+
+      var size = _this.getModuleCount() * cellSize + margin * 2;
+      var min = margin;
+      var max = size - margin;
+
+      return createDataURL(size, size, function(x, y) {
+        if (min <= x && x < max && min <= y && y < max) {
+          var c = Math.floor( (x - min) / cellSize);
+          var r = Math.floor( (y - min) / cellSize);
+          return _this.isDark(r, c)? 0 : 1;
+        } else {
+          return 1;
+        }
+      } );
+    };
+
+    _this.createImgTag = function(cellSize, margin, alt) {
+
+      cellSize = cellSize || 2;
+      margin = (typeof margin == 'undefined')? cellSize * 4 : margin;
+
+      var size = _this.getModuleCount() * cellSize + margin * 2;
+
+      var img = '';
+      img += '<img';
+      img += '\u0020src="';
+      img += _this.createDataURL(cellSize, margin);
+      img += '"';
+      img += '\u0020width="';
+      img += size;
+      img += '"';
+      img += '\u0020height="';
+      img += size;
+      img += '"';
+      if (alt) {
+        img += '\u0020alt="';
+        img += escapeXml(alt);
+        img += '"';
+      }
+      img += '/>';
+
+      return img;
+    };
+
+    var escapeXml = function(s) {
+      var escaped = '';
+      for (var i = 0; i < s.length; i += 1) {
+        var c = s.charAt(i);
+        switch(c) {
+        case '<': escaped += '&lt;'; break;
+        case '>': escaped += '&gt;'; break;
+        case '&': escaped += '&amp;'; break;
+        case '"': escaped += '&quot;'; break;
+        default : escaped += c; break;
+        }
+      }
+      return escaped;
+    };
+
+    var _createHalfASCII = function(margin) {
+      var cellSize = 1;
+      margin = (typeof margin == 'undefined')? cellSize * 2 : margin;
+
+      var size = _this.getModuleCount() * cellSize + margin * 2;
+      var min = margin;
+      var max = size - margin;
+
+      var y, x, r1, r2, p;
+
+      var blocks = {
+        '██': '█',
+        '█ ': '▀',
+        ' █': '▄',
+        '  ': ' '
+      };
+
+      var blocksLastLineNoMargin = {
+        '██': '▀',
+        '█ ': '▀',
+        ' █': ' ',
+        '  ': ' '
+      };
+
+      var ascii = '';
+      for (y = 0; y < size; y += 2) {
+        r1 = Math.floor((y - min) / cellSize);
+        r2 = Math.floor((y + 1 - min) / cellSize);
+        for (x = 0; x < size; x += 1) {
+          p = '█';
+
+          if (min <= x && x < max && min <= y && y < max && _this.isDark(r1, Math.floor((x - min) / cellSize))) {
+            p = ' ';
+          }
+
+          if (min <= x && x < max && min <= y+1 && y+1 < max && _this.isDark(r2, Math.floor((x - min) / cellSize))) {
+            p += ' ';
+          }
+          else {
+            p += '█';
+          }
+
+          // Output 2 characters per pixel, to create full square. 1 character per pixels gives only half width of square.
+          ascii += (margin < 1 && y+1 >= max) ? blocksLastLineNoMargin[p] : blocks[p];
+        }
+
+        ascii += '\n';
+      }
+
+      if (size % 2 && margin > 0) {
+        return ascii.substring(0, ascii.length - size - 1) + Array(size+1).join('▀');
+      }
+
+      return ascii.substring(0, ascii.length-1);
+    };
+
+    _this.createASCII = function(cellSize, margin) {
+      cellSize = cellSize || 1;
+
+      if (cellSize < 2) {
+        return _createHalfASCII(margin);
+      }
+
+      cellSize -= 1;
+      margin = (typeof margin == 'undefined')? cellSize * 2 : margin;
+
+      var size = _this.getModuleCount() * cellSize + margin * 2;
+      var min = margin;
+      var max = size - margin;
+
+      var y, x, r, p;
+
+      var white = Array(cellSize+1).join('██');
+      var black = Array(cellSize+1).join('  ');
+
+      var ascii = '';
+      var line = '';
+      for (y = 0; y < size; y += 1) {
+        r = Math.floor( (y - min) / cellSize);
+        line = '';
+        for (x = 0; x < size; x += 1) {
+          p = 1;
+
+          if (min <= x && x < max && min <= y && y < max && _this.isDark(r, Math.floor((x - min) / cellSize))) {
+            p = 0;
+          }
+
+          // Output 2 characters per pixel, to create full square. 1 character per pixels gives only half width of square.
+          line += p ? white : black;
+        }
+
+        for (r = 0; r < cellSize; r += 1) {
+          ascii += line + '\n';
+        }
+      }
+
+      return ascii.substring(0, ascii.length-1);
+    };
+
+    _this.renderTo2dContext = function(context, cellSize) {
+      cellSize = cellSize || 2;
+      var length = _this.getModuleCount();
+      for (var row = 0; row < length; row++) {
+        for (var col = 0; col < length; col++) {
+          context.fillStyle = _this.isDark(row, col) ? 'black' : 'white';
+          context.fillRect(col * cellSize, row * cellSize, cellSize, cellSize);
+        }
+      }
+    }
+
+    return _this;
+  };
+
+  //---------------------------------------------------------------------
+  // qrcode.stringToBytes
+  //---------------------------------------------------------------------
+
+  qrcode.stringToBytesFuncs = {
+    'default' : function(s) {
+      var bytes = [];
+      for (var i = 0; i < s.length; i += 1) {
+        var c = s.charCodeAt(i);
+        bytes.push(c & 0xff);
+      }
+      return bytes;
+    }
+  };
+
+  qrcode.stringToBytes = qrcode.stringToBytesFuncs['default'];
+
+  //---------------------------------------------------------------------
+  // qrcode.createStringToBytes
+  //---------------------------------------------------------------------
+
+  /**
+   * @param unicodeData base64 string of byte array.
+   * [16bit Unicode],[16bit Bytes], ...
+   * @param numChars
+   */
+  qrcode.createStringToBytes = function(unicodeData, numChars) {
+
+    // create conversion map.
+
+    var unicodeMap = function() {
+
+      var bin = base64DecodeInputStream(unicodeData);
+      var read = function() {
+        var b = bin.read();
+        if (b == -1) throw 'eof';
+        return b;
+      };
+
+      var count = 0;
+      var unicodeMap = {};
+      while (true) {
+        var b0 = bin.read();
+        if (b0 == -1) break;
+        var b1 = read();
+        var b2 = read();
+        var b3 = read();
+        var k = String.fromCharCode( (b0 << 8) | b1);
+        var v = (b2 << 8) | b3;
+        unicodeMap[k] = v;
+        count += 1;
+      }
+      if (count != numChars) {
+        throw count + ' != ' + numChars;
+      }
+
+      return unicodeMap;
+    }();
+
+    var unknownChar = '?'.charCodeAt(0);
+
+    return function(s) {
+      var bytes = [];
+      for (var i = 0; i < s.length; i += 1) {
+        var c = s.charCodeAt(i);
+        if (c < 128) {
+          bytes.push(c);
+        } else {
+          var b = unicodeMap[s.charAt(i)];
+          if (typeof b == 'number') {
+            if ( (b & 0xff) == b) {
+              // 1byte
+              bytes.push(b);
+            } else {
+              // 2bytes
+              bytes.push(b >>> 8);
+              bytes.push(b & 0xff);
+            }
+          } else {
+            bytes.push(unknownChar);
+          }
+        }
+      }
+      return bytes;
+    };
+  };
+
+  //---------------------------------------------------------------------
+  // QRMode
+  //---------------------------------------------------------------------
+
+  var QRMode = {
+    MODE_NUMBER :    1 << 0,
+    MODE_ALPHA_NUM : 1 << 1,
+    MODE_8BIT_BYTE : 1 << 2,
+    MODE_KANJI :     1 << 3
+  };
+
+  //---------------------------------------------------------------------
+  // QRErrorCorrectionLevel
+  //---------------------------------------------------------------------
+
+  var QRErrorCorrectionLevel = {
+    L : 1,
+    M : 0,
+    Q : 3,
+    H : 2
+  };
+
+  //---------------------------------------------------------------------
+  // QRMaskPattern
+  //---------------------------------------------------------------------
+
+  var QRMaskPattern = {
+    PATTERN000 : 0,
+    PATTERN001 : 1,
+    PATTERN010 : 2,
+    PATTERN011 : 3,
+    PATTERN100 : 4,
+    PATTERN101 : 5,
+    PATTERN110 : 6,
+    PATTERN111 : 7
+  };
+
+  //---------------------------------------------------------------------
+  // QRUtil
+  //---------------------------------------------------------------------
+
+  var QRUtil = function() {
+
+    var PATTERN_POSITION_TABLE = [
+      [],
+      [6, 18],
+      [6, 22],
+      [6, 26],
+      [6, 30],
+      [6, 34],
+      [6, 22, 38],
+      [6, 24, 42],
+      [6, 26, 46],
+      [6, 28, 50],
+      [6, 30, 54],
+      [6, 32, 58],
+      [6, 34, 62],
+      [6, 26, 46, 66],
+      [6, 26, 48, 70],
+      [6, 26, 50, 74],
+      [6, 30, 54, 78],
+      [6, 30, 56, 82],
+      [6, 30, 58, 86],
+      [6, 34, 62, 90],
+      [6, 28, 50, 72, 94],
+      [6, 26, 50, 74, 98],
+      [6, 30, 54, 78, 102],
+      [6, 28, 54, 80, 106],
+      [6, 32, 58, 84, 110],
+      [6, 30, 58, 86, 114],
+      [6, 34, 62, 90, 118],
+      [6, 26, 50, 74, 98, 122],
+      [6, 30, 54, 78, 102, 126],
+      [6, 26, 52, 78, 104, 130],
+      [6, 30, 56, 82, 108, 134],
+      [6, 34, 60, 86, 112, 138],
+      [6, 30, 58, 86, 114, 142],
+      [6, 34, 62, 90, 118, 146],
+      [6, 30, 54, 78, 102, 126, 150],
+      [6, 24, 50, 76, 102, 128, 154],
+      [6, 28, 54, 80, 106, 132, 158],
+      [6, 32, 58, 84, 110, 136, 162],
+      [6, 26, 54, 82, 110, 138, 166],
+      [6, 30, 58, 86, 114, 142, 170]
+    ];
+    var G15 = (1 << 10) | (1 << 8) | (1 << 5) | (1 << 4) | (1 << 2) | (1 << 1) | (1 << 0);
+    var G18 = (1 << 12) | (1 << 11) | (1 << 10) | (1 << 9) | (1 << 8) | (1 << 5) | (1 << 2) | (1 << 0);
+    var G15_MASK = (1 << 14) | (1 << 12) | (1 << 10) | (1 << 4) | (1 << 1);
+
+    var _this = {};
+
+    var getBCHDigit = function(data) {
+      var digit = 0;
+      while (data != 0) {
+        digit += 1;
+        data >>>= 1;
+      }
+      return digit;
+    };
+
+    _this.getBCHTypeInfo = function(data) {
+      var d = data << 10;
+      while (getBCHDigit(d) - getBCHDigit(G15) >= 0) {
+        d ^= (G15 << (getBCHDigit(d) - getBCHDigit(G15) ) );
+      }
+      return ( (data << 10) | d) ^ G15_MASK;
+    };
+
+    _this.getBCHTypeNumber = function(data) {
+      var d = data << 12;
+      while (getBCHDigit(d) - getBCHDigit(G18) >= 0) {
+        d ^= (G18 << (getBCHDigit(d) - getBCHDigit(G18) ) );
+      }
+      return (data << 12) | d;
+    };
+
+    _this.getPatternPosition = function(typeNumber) {
+      return PATTERN_POSITION_TABLE[typeNumber - 1];
+    };
+
+    _this.getMaskFunction = function(maskPattern) {
+
+      switch (maskPattern) {
+
+      case QRMaskPattern.PATTERN000 :
+        return function(i, j) { return (i + j) % 2 == 0; };
+      case QRMaskPattern.PATTERN001 :
+        return function(i, j) { return i % 2 == 0; };
+      case QRMaskPattern.PATTERN010 :
+        return function(i, j) { return j % 3 == 0; };
+      case QRMaskPattern.PATTERN011 :
+        return function(i, j) { return (i + j) % 3 == 0; };
+      case QRMaskPattern.PATTERN100 :
+        return function(i, j) { return (Math.floor(i / 2) + Math.floor(j / 3) ) % 2 == 0; };
+      case QRMaskPattern.PATTERN101 :
+        return function(i, j) { return (i * j) % 2 + (i * j) % 3 == 0; };
+      case QRMaskPattern.PATTERN110 :
+        return function(i, j) { return ( (i * j) % 2 + (i * j) % 3) % 2 == 0; };
+      case QRMaskPattern.PATTERN111 :
+        return function(i, j) { return ( (i * j) % 3 + (i + j) % 2) % 2 == 0; };
+
+      default :
+        throw 'bad maskPattern:' + maskPattern;
+      }
+    };
+
+    _this.getErrorCorrectPolynomial = function(errorCorrectLength) {
+      var a = qrPolynomial([1], 0);
+      for (var i = 0; i < errorCorrectLength; i += 1) {
+        a = a.multiply(qrPolynomial([1, QRMath.gexp(i)], 0) );
+      }
+      return a;
+    };
+
+    _this.getLengthInBits = function(mode, type) {
+
+      if (1 <= type && type < 10) {
+
+        // 1 - 9
+
+        switch(mode) {
+        case QRMode.MODE_NUMBER    : return 10;
+        case QRMode.MODE_ALPHA_NUM : return 9;
+        case QRMode.MODE_8BIT_BYTE : return 8;
+        case QRMode.MODE_KANJI     : return 8;
+        default :
+          throw 'mode:' + mode;
+        }
+
+      } else if (type < 27) {
+
+        // 10 - 26
+
+        switch(mode) {
+        case QRMode.MODE_NUMBER    : return 12;
+        case QRMode.MODE_ALPHA_NUM : return 11;
+        case QRMode.MODE_8BIT_BYTE : return 16;
+        case QRMode.MODE_KANJI     : return 10;
+        default :
+          throw 'mode:' + mode;
+        }
+
+      } else if (type < 41) {
+
+        // 27 - 40
+
+        switch(mode) {
+        case QRMode.MODE_NUMBER    : return 14;
+        case QRMode.MODE_ALPHA_NUM : return 13;
+        case QRMode.MODE_8BIT_BYTE : return 16;
+        case QRMode.MODE_KANJI     : return 12;
+        default :
+          throw 'mode:' + mode;
+        }
+
+      } else {
+        throw 'type:' + type;
+      }
+    };
+
+    _this.getLostPoint = function(qrcode) {
+
+      var moduleCount = qrcode.getModuleCount();
+
+      var lostPoint = 0;
+
+      // LEVEL1
+
+      for (var row = 0; row < moduleCount; row += 1) {
+        for (var col = 0; col < moduleCount; col += 1) {
+
+          var sameCount = 0;
+          var dark = qrcode.isDark(row, col);
+
+          for (var r = -1; r <= 1; r += 1) {
+
+            if (row + r < 0 || moduleCount <= row + r) {
+              continue;
+            }
+
+            for (var c = -1; c <= 1; c += 1) {
+
+              if (col + c < 0 || moduleCount <= col + c) {
+                continue;
+              }
+
+              if (r == 0 && c == 0) {
+                continue;
+              }
+
+              if (dark == qrcode.isDark(row + r, col + c) ) {
+                sameCount += 1;
+              }
+            }
+          }
+
+          if (sameCount > 5) {
+            lostPoint += (3 + sameCount - 5);
+          }
+        }
+      };
+
+      // LEVEL2
+
+      for (var row = 0; row < moduleCount - 1; row += 1) {
+        for (var col = 0; col < moduleCount - 1; col += 1) {
+          var count = 0;
+          if (qrcode.isDark(row, col) ) count += 1;
+          if (qrcode.isDark(row + 1, col) ) count += 1;
+          if (qrcode.isDark(row, col + 1) ) count += 1;
+          if (qrcode.isDark(row + 1, col + 1) ) count += 1;
+          if (count == 0 || count == 4) {
+            lostPoint += 3;
+          }
+        }
+      }
+
+      // LEVEL3
+
+      for (var row = 0; row < moduleCount; row += 1) {
+        for (var col = 0; col < moduleCount - 6; col += 1) {
+          if (qrcode.isDark(row, col)
+              && !qrcode.isDark(row, col + 1)
+              &&  qrcode.isDark(row, col + 2)
+              &&  qrcode.isDark(row, col + 3)
+              &&  qrcode.isDark(row, col + 4)
+              && !qrcode.isDark(row, col + 5)
+              &&  qrcode.isDark(row, col + 6) ) {
+            lostPoint += 40;
+          }
+        }
+      }
+
+      for (var col = 0; col < moduleCount; col += 1) {
+        for (var row = 0; row < moduleCount - 6; row += 1) {
+          if (qrcode.isDark(row, col)
+              && !qrcode.isDark(row + 1, col)
+              &&  qrcode.isDark(row + 2, col)
+              &&  qrcode.isDark(row + 3, col)
+              &&  qrcode.isDark(row + 4, col)
+              && !qrcode.isDark(row + 5, col)
+              &&  qrcode.isDark(row + 6, col) ) {
+            lostPoint += 40;
+          }
+        }
+      }
+
+      // LEVEL4
+
+      var darkCount = 0;
+
+      for (var col = 0; col < moduleCount; col += 1) {
+        for (var row = 0; row < moduleCount; row += 1) {
+          if (qrcode.isDark(row, col) ) {
+            darkCount += 1;
+          }
+        }
+      }
+
+      var ratio = Math.abs(100 * darkCount / moduleCount / moduleCount - 50) / 5;
+      lostPoint += ratio * 10;
+
+      return lostPoint;
+    };
+
+    return _this;
+  }();
+
+  //---------------------------------------------------------------------
+  // QRMath
+  //---------------------------------------------------------------------
+
+  var QRMath = function() {
+
+    var EXP_TABLE = new Array(256);
+    var LOG_TABLE = new Array(256);
+
+    // initialize tables
+    for (var i = 0; i < 8; i += 1) {
+      EXP_TABLE[i] = 1 << i;
+    }
+    for (var i = 8; i < 256; i += 1) {
+      EXP_TABLE[i] = EXP_TABLE[i - 4]
+        ^ EXP_TABLE[i - 5]
+        ^ EXP_TABLE[i - 6]
+        ^ EXP_TABLE[i - 8];
+    }
+    for (var i = 0; i < 255; i += 1) {
+      LOG_TABLE[EXP_TABLE[i] ] = i;
+    }
+
+    var _this = {};
+
+    _this.glog = function(n) {
+
+      if (n < 1) {
+        throw 'glog(' + n + ')';
+      }
+
+      return LOG_TABLE[n];
+    };
+
+    _this.gexp = function(n) {
+
+      while (n < 0) {
+        n += 255;
+      }
+
+      while (n >= 256) {
+        n -= 255;
+      }
+
+      return EXP_TABLE[n];
+    };
+
+    return _this;
+  }();
+
+  //---------------------------------------------------------------------
+  // qrPolynomial
+  //---------------------------------------------------------------------
+
+  function qrPolynomial(num, shift) {
+
+    if (typeof num.length == 'undefined') {
+      throw num.length + '/' + shift;
+    }
+
+    var _num = function() {
+      var offset = 0;
+      while (offset < num.length && num[offset] == 0) {
+        offset += 1;
+      }
+      var _num = new Array(num.length - offset + shift);
+      for (var i = 0; i < num.length - offset; i += 1) {
+        _num[i] = num[i + offset];
+      }
+      return _num;
+    }();
+
+    var _this = {};
+
+    _this.getAt = function(index) {
+      return _num[index];
+    };
+
+    _this.getLength = function() {
+      return _num.length;
+    };
+
+    _this.multiply = function(e) {
+
+      var num = new Array(_this.getLength() + e.getLength() - 1);
+
+      for (var i = 0; i < _this.getLength(); i += 1) {
+        for (var j = 0; j < e.getLength(); j += 1) {
+          num[i + j] ^= QRMath.gexp(QRMath.glog(_this.getAt(i) ) + QRMath.glog(e.getAt(j) ) );
+        }
+      }
+
+      return qrPolynomial(num, 0);
+    };
+
+    _this.mod = function(e) {
+
+      if (_this.getLength() - e.getLength() < 0) {
+        return _this;
+      }
+
+      var ratio = QRMath.glog(_this.getAt(0) ) - QRMath.glog(e.getAt(0) );
+
+      var num = new Array(_this.getLength() );
+      for (var i = 0; i < _this.getLength(); i += 1) {
+        num[i] = _this.getAt(i);
+      }
+
+      for (var i = 0; i < e.getLength(); i += 1) {
+        num[i] ^= QRMath.gexp(QRMath.glog(e.getAt(i) ) + ratio);
+      }
+
+      // recursive call
+      return qrPolynomial(num, 0).mod(e);
+    };
+
+    return _this;
+  };
+
+  //---------------------------------------------------------------------
+  // QRRSBlock
+  //---------------------------------------------------------------------
+
+  var QRRSBlock = function() {
+
+    var RS_BLOCK_TABLE = [
+
+      // L
+      // M
+      // Q
+      // H
+
+      // 1
+      [1, 26, 19],
+      [1, 26, 16],
+      [1, 26, 13],
+      [1, 26, 9],
+
+      // 2
+      [1, 44, 34],
+      [1, 44, 28],
+      [1, 44, 22],
+      [1, 44, 16],
+
+      // 3
+      [1, 70, 55],
+      [1, 70, 44],
+      [2, 35, 17],
+      [2, 35, 13],
+
+      // 4
+      [1, 100, 80],
+      [2, 50, 32],
+      [2, 50, 24],
+      [4, 25, 9],
+
+      // 5
+      [1, 134, 108],
+      [2, 67, 43],
+      [2, 33, 15, 2, 34, 16],
+      [2, 33, 11, 2, 34, 12],
+
+      // 6
+      [2, 86, 68],
+      [4, 43, 27],
+      [4, 43, 19],
+      [4, 43, 15],
+
+      // 7
+      [2, 98, 78],
+      [4, 49, 31],
+      [2, 32, 14, 4, 33, 15],
+      [4, 39, 13, 1, 40, 14],
+
+      // 8
+      [2, 121, 97],
+      [2, 60, 38, 2, 61, 39],
+      [4, 40, 18, 2, 41, 19],
+      [4, 40, 14, 2, 41, 15],
+
+      // 9
+      [2, 146, 116],
+      [3, 58, 36, 2, 59, 37],
+      [4, 36, 16, 4, 37, 17],
+      [4, 36, 12, 4, 37, 13],
+
+      // 10
+      [2, 86, 68, 2, 87, 69],
+      [4, 69, 43, 1, 70, 44],
+      [6, 43, 19, 2, 44, 20],
+      [6, 43, 15, 2, 44, 16],
+
+      // 11
+      [4, 101, 81],
+      [1, 80, 50, 4, 81, 51],
+      [4, 50, 22, 4, 51, 23],
+      [3, 36, 12, 8, 37, 13],
+
+      // 12
+      [2, 116, 92, 2, 117, 93],
+      [6, 58, 36, 2, 59, 37],
+      [4, 46, 20, 6, 47, 21],
+      [7, 42, 14, 4, 43, 15],
+
+      // 13
+      [4, 133, 107],
+      [8, 59, 37, 1, 60, 38],
+      [8, 44, 20, 4, 45, 21],
+      [12, 33, 11, 4, 34, 12],
+
+      // 14
+      [3, 145, 115, 1, 146, 116],
+      [4, 64, 40, 5, 65, 41],
+      [11, 36, 16, 5, 37, 17],
+      [11, 36, 12, 5, 37, 13],
+
+      // 15
+      [5, 109, 87, 1, 110, 88],
+      [5, 65, 41, 5, 66, 42],
+      [5, 54, 24, 7, 55, 25],
+      [11, 36, 12, 7, 37, 13],
+
+      // 16
+      [5, 122, 98, 1, 123, 99],
+      [7, 73, 45, 3, 74, 46],
+      [15, 43, 19, 2, 44, 20],
+      [3, 45, 15, 13, 46, 16],
+
+      // 17
+      [1, 135, 107, 5, 136, 108],
+      [10, 74, 46, 1, 75, 47],
+      [1, 50, 22, 15, 51, 23],
+      [2, 42, 14, 17, 43, 15],
+
+      // 18
+      [5, 150, 120, 1, 151, 121],
+      [9, 69, 43, 4, 70, 44],
+      [17, 50, 22, 1, 51, 23],
+      [2, 42, 14, 19, 43, 15],
+
+      // 19
+      [3, 141, 113, 4, 142, 114],
+      [3, 70, 44, 11, 71, 45],
+      [17, 47, 21, 4, 48, 22],
+      [9, 39, 13, 16, 40, 14],
+
+      // 20
+      [3, 135, 107, 5, 136, 108],
+      [3, 67, 41, 13, 68, 42],
+      [15, 54, 24, 5, 55, 25],
+      [15, 43, 15, 10, 44, 16],
+
+      // 21
+      [4, 144, 116, 4, 145, 117],
+      [17, 68, 42],
+      [17, 50, 22, 6, 51, 23],
+      [19, 46, 16, 6, 47, 17],
+
+      // 22
+      [2, 139, 111, 7, 140, 112],
+      [17, 74, 46],
+      [7, 54, 24, 16, 55, 25],
+      [34, 37, 13],
+
+      // 23
+      [4, 151, 121, 5, 152, 122],
+      [4, 75, 47, 14, 76, 48],
+      [11, 54, 24, 14, 55, 25],
+      [16, 45, 15, 14, 46, 16],
+
+      // 24
+      [6, 147, 117, 4, 148, 118],
+      [6, 73, 45, 14, 74, 46],
+      [11, 54, 24, 16, 55, 25],
+      [30, 46, 16, 2, 47, 17],
+
+      // 25
+      [8, 132, 106, 4, 133, 107],
+      [8, 75, 47, 13, 76, 48],
+      [7, 54, 24, 22, 55, 25],
+      [22, 45, 15, 13, 46, 16],
+
+      // 26
+      [10, 142, 114, 2, 143, 115],
+      [19, 74, 46, 4, 75, 47],
+      [28, 50, 22, 6, 51, 23],
+      [33, 46, 16, 4, 47, 17],
+
+      // 27
+      [8, 152, 122, 4, 153, 123],
+      [22, 73, 45, 3, 74, 46],
+      [8, 53, 23, 26, 54, 24],
+      [12, 45, 15, 28, 46, 16],
+
+      // 28
+      [3, 147, 117, 10, 148, 118],
+      [3, 73, 45, 23, 74, 46],
+      [4, 54, 24, 31, 55, 25],
+      [11, 45, 15, 31, 46, 16],
+
+      // 29
+      [7, 146, 116, 7, 147, 117],
+      [21, 73, 45, 7, 74, 46],
+      [1, 53, 23, 37, 54, 24],
+      [19, 45, 15, 26, 46, 16],
+
+      // 30
+      [5, 145, 115, 10, 146, 116],
+      [19, 75, 47, 10, 76, 48],
+      [15, 54, 24, 25, 55, 25],
+      [23, 45, 15, 25, 46, 16],
+
+      // 31
+      [13, 145, 115, 3, 146, 116],
+      [2, 74, 46, 29, 75, 47],
+      [42, 54, 24, 1, 55, 25],
+      [23, 45, 15, 28, 46, 16],
+
+      // 32
+      [17, 145, 115],
+      [10, 74, 46, 23, 75, 47],
+      [10, 54, 24, 35, 55, 25],
+      [19, 45, 15, 35, 46, 16],
+
+      // 33
+      [17, 145, 115, 1, 146, 116],
+      [14, 74, 46, 21, 75, 47],
+      [29, 54, 24, 19, 55, 25],
+      [11, 45, 15, 46, 46, 16],
+
+      // 34
+      [13, 145, 115, 6, 146, 116],
+      [14, 74, 46, 23, 75, 47],
+      [44, 54, 24, 7, 55, 25],
+      [59, 46, 16, 1, 47, 17],
+
+      // 35
+      [12, 151, 121, 7, 152, 122],
+      [12, 75, 47, 26, 76, 48],
+      [39, 54, 24, 14, 55, 25],
+      [22, 45, 15, 41, 46, 16],
+
+      // 36
+      [6, 151, 121, 14, 152, 122],
+      [6, 75, 47, 34, 76, 48],
+      [46, 54, 24, 10, 55, 25],
+      [2, 45, 15, 64, 46, 16],
+
+      // 37
+      [17, 152, 122, 4, 153, 123],
+      [29, 74, 46, 14, 75, 47],
+      [49, 54, 24, 10, 55, 25],
+      [24, 45, 15, 46, 46, 16],
+
+      // 38
+      [4, 152, 122, 18, 153, 123],
+      [13, 74, 46, 32, 75, 47],
+      [48, 54, 24, 14, 55, 25],
+      [42, 45, 15, 32, 46, 16],
+
+      // 39
+      [20, 147, 117, 4, 148, 118],
+      [40, 75, 47, 7, 76, 48],
+      [43, 54, 24, 22, 55, 25],
+      [10, 45, 15, 67, 46, 16],
+
+      // 40
+      [19, 148, 118, 6, 149, 119],
+      [18, 75, 47, 31, 76, 48],
+      [34, 54, 24, 34, 55, 25],
+      [20, 45, 15, 61, 46, 16]
+    ];
+
+    var qrRSBlock = function(totalCount, dataCount) {
+      var _this = {};
+      _this.totalCount = totalCount;
+      _this.dataCount = dataCount;
+      return _this;
+    };
+
+    var _this = {};
+
+    var getRsBlockTable = function(typeNumber, errorCorrectionLevel) {
+
+      switch(errorCorrectionLevel) {
+      case QRErrorCorrectionLevel.L :
+        return RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 0];
+      case QRErrorCorrectionLevel.M :
+        return RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 1];
+      case QRErrorCorrectionLevel.Q :
+        return RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 2];
+      case QRErrorCorrectionLevel.H :
+        return RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 3];
+      default :
+        return undefined;
+      }
+    };
+
+    _this.getRSBlocks = function(typeNumber, errorCorrectionLevel) {
+
+      var rsBlock = getRsBlockTable(typeNumber, errorCorrectionLevel);
+
+      if (typeof rsBlock == 'undefined') {
+        throw 'bad rs block @ typeNumber:' + typeNumber +
+            '/errorCorrectionLevel:' + errorCorrectionLevel;
+      }
+
+      var length = rsBlock.length / 3;
+
+      var list = [];
+
+      for (var i = 0; i < length; i += 1) {
+
+        var count = rsBlock[i * 3 + 0];
+        var totalCount = rsBlock[i * 3 + 1];
+        var dataCount = rsBlock[i * 3 + 2];
+
+        for (var j = 0; j < count; j += 1) {
+          list.push(qrRSBlock(totalCount, dataCount) );
+        }
+      }
+
+      return list;
+    };
+
+    return _this;
+  }();
+
+  //---------------------------------------------------------------------
+  // qrBitBuffer
+  //---------------------------------------------------------------------
+
+  var qrBitBuffer = function() {
+
+    var _buffer = [];
+    var _length = 0;
+
+    var _this = {};
+
+    _this.getBuffer = function() {
+      return _buffer;
+    };
+
+    _this.getAt = function(index) {
+      var bufIndex = Math.floor(index / 8);
+      return ( (_buffer[bufIndex] >>> (7 - index % 8) ) & 1) == 1;
+    };
+
+    _this.put = function(num, length) {
+      for (var i = 0; i < length; i += 1) {
+        _this.putBit( ( (num >>> (length - i - 1) ) & 1) == 1);
+      }
+    };
+
+    _this.getLengthInBits = function() {
+      return _length;
+    };
+
+    _this.putBit = function(bit) {
+
+      var bufIndex = Math.floor(_length / 8);
+      if (_buffer.length <= bufIndex) {
+        _buffer.push(0);
+      }
+
+      if (bit) {
+        _buffer[bufIndex] |= (0x80 >>> (_length % 8) );
+      }
+
+      _length += 1;
+    };
+
+    return _this;
+  };
+
+  //---------------------------------------------------------------------
+  // qrNumber
+  //---------------------------------------------------------------------
+
+  var qrNumber = function(data) {
+
+    var _mode = QRMode.MODE_NUMBER;
+    var _data = data;
+
+    var _this = {};
+
+    _this.getMode = function() {
+      return _mode;
+    };
+
+    _this.getLength = function(buffer) {
+      return _data.length;
+    };
+
+    _this.write = function(buffer) {
+
+      var data = _data;
+
+      var i = 0;
+
+      while (i + 2 < data.length) {
+        buffer.put(strToNum(data.substring(i, i + 3) ), 10);
+        i += 3;
+      }
+
+      if (i < data.length) {
+        if (data.length - i == 1) {
+          buffer.put(strToNum(data.substring(i, i + 1) ), 4);
+        } else if (data.length - i == 2) {
+          buffer.put(strToNum(data.substring(i, i + 2) ), 7);
+        }
+      }
+    };
+
+    var strToNum = function(s) {
+      var num = 0;
+      for (var i = 0; i < s.length; i += 1) {
+        num = num * 10 + chatToNum(s.charAt(i) );
+      }
+      return num;
+    };
+
+    var chatToNum = function(c) {
+      if ('0' <= c && c <= '9') {
+        return c.charCodeAt(0) - '0'.charCodeAt(0);
+      }
+      throw 'illegal char :' + c;
+    };
+
+    return _this;
+  };
+
+  //---------------------------------------------------------------------
+  // qrAlphaNum
+  //---------------------------------------------------------------------
+
+  var qrAlphaNum = function(data) {
+
+    var _mode = QRMode.MODE_ALPHA_NUM;
+    var _data = data;
+
+    var _this = {};
+
+    _this.getMode = function() {
+      return _mode;
+    };
+
+    _this.getLength = function(buffer) {
+      return _data.length;
+    };
+
+    _this.write = function(buffer) {
+
+      var s = _data;
+
+      var i = 0;
+
+      while (i + 1 < s.length) {
+        buffer.put(
+          getCode(s.charAt(i) ) * 45 +
+          getCode(s.charAt(i + 1) ), 11);
+        i += 2;
+      }
+
+      if (i < s.length) {
+        buffer.put(getCode(s.charAt(i) ), 6);
+      }
+    };
+
+    var getCode = function(c) {
+
+      if ('0' <= c && c <= '9') {
+        return c.charCodeAt(0) - '0'.charCodeAt(0);
+      } else if ('A' <= c && c <= 'Z') {
+        return c.charCodeAt(0) - 'A'.charCodeAt(0) + 10;
+      } else {
+        switch (c) {
+        case ' ' : return 36;
+        case '$' : return 37;
+        case '%' : return 38;
+        case '*' : return 39;
+        case '+' : return 40;
+        case '-' : return 41;
+        case '.' : return 42;
+        case '/' : return 43;
+        case ':' : return 44;
+        default :
+          throw 'illegal char :' + c;
+        }
+      }
+    };
+
+    return _this;
+  };
+
+  //---------------------------------------------------------------------
+  // qr8BitByte
+  //---------------------------------------------------------------------
+
+  var qr8BitByte = function(data) {
+
+    var _mode = QRMode.MODE_8BIT_BYTE;
+    var _data = data;
+    var _bytes = qrcode.stringToBytes(data);
+
+    var _this = {};
+
+    _this.getMode = function() {
+      return _mode;
+    };
+
+    _this.getLength = function(buffer) {
+      return _bytes.length;
+    };
+
+    _this.write = function(buffer) {
+      for (var i = 0; i < _bytes.length; i += 1) {
+        buffer.put(_bytes[i], 8);
+      }
+    };
+
+    return _this;
+  };
+
+  //---------------------------------------------------------------------
+  // qrKanji
+  //---------------------------------------------------------------------
+
+  var qrKanji = function(data) {
+
+    var _mode = QRMode.MODE_KANJI;
+    var _data = data;
+
+    var stringToBytes = qrcode.stringToBytesFuncs['SJIS'];
+    if (!stringToBytes) {
+      throw 'sjis not supported.';
+    }
+    !function(c, code) {
+      // self test for sjis support.
+      var test = stringToBytes(c);
+      if (test.length != 2 || ( (test[0] << 8) | test[1]) != code) {
+        throw 'sjis not supported.';
+      }
+    }('\u53cb', 0x9746);
+
+    var _bytes = stringToBytes(data);
+
+    var _this = {};
+
+    _this.getMode = function() {
+      return _mode;
+    };
+
+    _this.getLength = function(buffer) {
+      return ~~(_bytes.length / 2);
+    };
+
+    _this.write = function(buffer) {
+
+      var data = _bytes;
+
+      var i = 0;
+
+      while (i + 1 < data.length) {
+
+        var c = ( (0xff & data[i]) << 8) | (0xff & data[i + 1]);
+
+        if (0x8140 <= c && c <= 0x9FFC) {
+          c -= 0x8140;
+        } else if (0xE040 <= c && c <= 0xEBBF) {
+          c -= 0xC140;
+        } else {
+          throw 'illegal char at ' + (i + 1) + '/' + c;
+        }
+
+        c = ( (c >>> 8) & 0xff) * 0xC0 + (c & 0xff);
+
+        buffer.put(c, 13);
+
+        i += 2;
+      }
+
+      if (i < data.length) {
+        throw 'illegal char at ' + (i + 1);
+      }
+    };
+
+    return _this;
+  };
+
+  //=====================================================================
+  // GIF Support etc.
+  //
+
+  //---------------------------------------------------------------------
+  // byteArrayOutputStream
+  //---------------------------------------------------------------------
+
+  var byteArrayOutputStream = function() {
+
+    var _bytes = [];
+
+    var _this = {};
+
+    _this.writeByte = function(b) {
+      _bytes.push(b & 0xff);
+    };
+
+    _this.writeShort = function(i) {
+      _this.writeByte(i);
+      _this.writeByte(i >>> 8);
+    };
+
+    _this.writeBytes = function(b, off, len) {
+      off = off || 0;
+      len = len || b.length;
+      for (var i = 0; i < len; i += 1) {
+        _this.writeByte(b[i + off]);
+      }
+    };
+
+    _this.writeString = function(s) {
+      for (var i = 0; i < s.length; i += 1) {
+        _this.writeByte(s.charCodeAt(i) );
+      }
+    };
+
+    _this.toByteArray = function() {
+      return _bytes;
+    };
+
+    _this.toString = function() {
+      var s = '';
+      s += '[';
+      for (var i = 0; i < _bytes.length; i += 1) {
+        if (i > 0) {
+          s += ',';
+        }
+        s += _bytes[i];
+      }
+      s += ']';
+      return s;
+    };
+
+    return _this;
+  };
+
+  //---------------------------------------------------------------------
+  // base64EncodeOutputStream
+  //---------------------------------------------------------------------
+
+  var base64EncodeOutputStream = function() {
+
+    var _buffer = 0;
+    var _buflen = 0;
+    var _length = 0;
+    var _base64 = '';
+
+    var _this = {};
+
+    var writeEncoded = function(b) {
+      _base64 += String.fromCharCode(encode(b & 0x3f) );
+    };
+
+    var encode = function(n) {
+      if (n < 0) {
+        // error.
+      } else if (n < 26) {
+        return 0x41 + n;
+      } else if (n < 52) {
+        return 0x61 + (n - 26);
+      } else if (n < 62) {
+        return 0x30 + (n - 52);
+      } else if (n == 62) {
+        return 0x2b;
+      } else if (n == 63) {
+        return 0x2f;
+      }
+      throw 'n:' + n;
+    };
+
+    _this.writeByte = function(n) {
+
+      _buffer = (_buffer << 8) | (n & 0xff);
+      _buflen += 8;
+      _length += 1;
+
+      while (_buflen >= 6) {
+        writeEncoded(_buffer >>> (_buflen - 6) );
+        _buflen -= 6;
+      }
+    };
+
+    _this.flush = function() {
+
+      if (_buflen > 0) {
+        writeEncoded(_buffer << (6 - _buflen) );
+        _buffer = 0;
+        _buflen = 0;
+      }
+
+      if (_length % 3 != 0) {
+        // padding
+        var padlen = 3 - _length % 3;
+        for (var i = 0; i < padlen; i += 1) {
+          _base64 += '=';
+        }
+      }
+    };
+
+    _this.toString = function() {
+      return _base64;
+    };
+
+    return _this;
+  };
+
+  //---------------------------------------------------------------------
+  // base64DecodeInputStream
+  //---------------------------------------------------------------------
+
+  var base64DecodeInputStream = function(str) {
+
+    var _str = str;
+    var _pos = 0;
+    var _buffer = 0;
+    var _buflen = 0;
+
+    var _this = {};
+
+    _this.read = function() {
+
+      while (_buflen < 8) {
+
+        if (_pos >= _str.length) {
+          if (_buflen == 0) {
+            return -1;
+          }
+          throw 'unexpected end of file./' + _buflen;
+        }
+
+        var c = _str.charAt(_pos);
+        _pos += 1;
+
+        if (c == '=') {
+          _buflen = 0;
+          return -1;
+        } else if (c.match(/^\s$/) ) {
+          // ignore if whitespace.
+          continue;
+        }
+
+        _buffer = (_buffer << 6) | decode(c.charCodeAt(0) );
+        _buflen += 6;
+      }
+
+      var n = (_buffer >>> (_buflen - 8) ) & 0xff;
+      _buflen -= 8;
+      return n;
+    };
+
+    var decode = function(c) {
+      if (0x41 <= c && c <= 0x5a) {
+        return c - 0x41;
+      } else if (0x61 <= c && c <= 0x7a) {
+        return c - 0x61 + 26;
+      } else if (0x30 <= c && c <= 0x39) {
+        return c - 0x30 + 52;
+      } else if (c == 0x2b) {
+        return 62;
+      } else if (c == 0x2f) {
+        return 63;
+      } else {
+        throw 'c:' + c;
+      }
+    };
+
+    return _this;
+  };
+
+  //---------------------------------------------------------------------
+  // gifImage (B/W)
+  //---------------------------------------------------------------------
+
+  var gifImage = function(width, height) {
+
+    var _width = width;
+    var _height = height;
+    var _data = new Array(width * height);
+
+    var _this = {};
+
+    _this.setPixel = function(x, y, pixel) {
+      _data[y * _width + x] = pixel;
+    };
+
+    _this.write = function(out) {
+
+      //---------------------------------
+      // GIF Signature
+
+      out.writeString('GIF87a');
+
+      //---------------------------------
+      // Screen Descriptor
+
+      out.writeShort(_width);
+      out.writeShort(_height);
+
+      out.writeByte(0x80); // 2bit
+      out.writeByte(0);
+      out.writeByte(0);
+
+      //---------------------------------
+      // Global Color Map
+
+      // black
+      out.writeByte(0x00);
+      out.writeByte(0x00);
+      out.writeByte(0x00);
+
+      // white
+      out.writeByte(0xff);
+      out.writeByte(0xff);
+      out.writeByte(0xff);
+
+      //---------------------------------
+      // Image Descriptor
+
+      out.writeString(',');
+      out.writeShort(0);
+      out.writeShort(0);
+      out.writeShort(_width);
+      out.writeShort(_height);
+      out.writeByte(0);
+
+      //---------------------------------
+      // Local Color Map
+
+      //---------------------------------
+      // Raster Data
+
+      var lzwMinCodeSize = 2;
+      var raster = getLZWRaster(lzwMinCodeSize);
+
+      out.writeByte(lzwMinCodeSize);
+
+      var offset = 0;
+
+      while (raster.length - offset > 255) {
+        out.writeByte(255);
+        out.writeBytes(raster, offset, 255);
+        offset += 255;
+      }
+
+      out.writeByte(raster.length - offset);
+      out.writeBytes(raster, offset, raster.length - offset);
+      out.writeByte(0x00);
+
+      //---------------------------------
+      // GIF Terminator
+      out.writeString(';');
+    };
+
+    var bitOutputStream = function(out) {
+
+      var _out = out;
+      var _bitLength = 0;
+      var _bitBuffer = 0;
+
+      var _this = {};
+
+      _this.write = function(data, length) {
+
+        if ( (data >>> length) != 0) {
+          throw 'length over';
+        }
+
+        while (_bitLength + length >= 8) {
+          _out.writeByte(0xff & ( (data << _bitLength) | _bitBuffer) );
+          length -= (8 - _bitLength);
+          data >>>= (8 - _bitLength);
+          _bitBuffer = 0;
+          _bitLength = 0;
+        }
+
+        _bitBuffer = (data << _bitLength) | _bitBuffer;
+        _bitLength = _bitLength + length;
+      };
+
+      _this.flush = function() {
+        if (_bitLength > 0) {
+          _out.writeByte(_bitBuffer);
+        }
+      };
+
+      return _this;
+    };
+
+    var getLZWRaster = function(lzwMinCodeSize) {
+
+      var clearCode = 1 << lzwMinCodeSize;
+      var endCode = (1 << lzwMinCodeSize) + 1;
+      var bitLength = lzwMinCodeSize + 1;
+
+      // Setup LZWTable
+      var table = lzwTable();
+
+      for (var i = 0; i < clearCode; i += 1) {
+        table.add(String.fromCharCode(i) );
+      }
+      table.add(String.fromCharCode(clearCode) );
+      table.add(String.fromCharCode(endCode) );
+
+      var byteOut = byteArrayOutputStream();
+      var bitOut = bitOutputStream(byteOut);
+
+      // clear code
+      bitOut.write(clearCode, bitLength);
+
+      var dataIndex = 0;
+
+      var s = String.fromCharCode(_data[dataIndex]);
+      dataIndex += 1;
+
+      while (dataIndex < _data.length) {
+
+        var c = String.fromCharCode(_data[dataIndex]);
+        dataIndex += 1;
+
+        if (table.contains(s + c) ) {
+
+          s = s + c;
+
+        } else {
+
+          bitOut.write(table.indexOf(s), bitLength);
+
+          if (table.size() < 0xfff) {
+
+            if (table.size() == (1 << bitLength) ) {
+              bitLength += 1;
+            }
+
+            table.add(s + c);
+          }
+
+          s = c;
+        }
+      }
+
+      bitOut.write(table.indexOf(s), bitLength);
+
+      // end code
+      bitOut.write(endCode, bitLength);
+
+      bitOut.flush();
+
+      return byteOut.toByteArray();
+    };
+
+    var lzwTable = function() {
+
+      var _map = {};
+      var _size = 0;
+
+      var _this = {};
+
+      _this.add = function(key) {
+        if (_this.contains(key) ) {
+          throw 'dup key:' + key;
+        }
+        _map[key] = _size;
+        _size += 1;
+      };
+
+      _this.size = function() {
+        return _size;
+      };
+
+      _this.indexOf = function(key) {
+        return _map[key];
+      };
+
+      _this.contains = function(key) {
+        return typeof _map[key] != 'undefined';
+      };
+
+      return _this;
+    };
+
+    return _this;
+  };
+
+  var createDataURL = function(width, height, getPixel) {
+    var gif = gifImage(width, height);
+    for (var y = 0; y < height; y += 1) {
+      for (var x = 0; x < width; x += 1) {
+        gif.setPixel(x, y, getPixel(x, y) );
+      }
+    }
+
+    var b = byteArrayOutputStream();
+    gif.write(b);
+
+    var base64 = base64EncodeOutputStream();
+    var bytes = b.toByteArray();
+    for (var i = 0; i < bytes.length; i += 1) {
+      base64.writeByte(bytes[i]);
+    }
+    base64.flush();
+
+    return 'data:image/gif;base64,' + base64;
+  };
+
+  //---------------------------------------------------------------------
+  // returns qrcode function.
+
+  return qrcode;
+}();
+
+// multibyte support
+!function() {
+
+  qrcode.stringToBytesFuncs['UTF-8'] = function(s) {
+    // http://stackoverflow.com/questions/18729405/how-to-convert-utf8-string-to-byte-array
+    function toUTF8Array(str) {
+      var utf8 = [];
+      for (var i=0; i < str.length; i++) {
+        var charcode = str.charCodeAt(i);
+        if (charcode < 0x80) utf8.push(charcode);
+        else if (charcode < 0x800) {
+          utf8.push(0xc0 | (charcode >> 6),
+              0x80 | (charcode & 0x3f));
+        }
+        else if (charcode < 0xd800 || charcode >= 0xe000) {
+          utf8.push(0xe0 | (charcode >> 12),
+              0x80 | ((charcode>>6) & 0x3f),
+              0x80 | (charcode & 0x3f));
+        }
+        // surrogate pair
+        else {
+          i++;
+          // UTF-16 encodes 0x10000-0x10FFFF by
+          // subtracting 0x10000 and splitting the
+          // 20 bits of 0x0-0xFFFFF into two halves
+          charcode = 0x10000 + (((charcode & 0x3ff)<<10)
+            | (str.charCodeAt(i) & 0x3ff));
+          utf8.push(0xf0 | (charcode >>18),
+              0x80 | ((charcode>>12) & 0x3f),
+              0x80 | ((charcode>>6) & 0x3f),
+              0x80 | (charcode & 0x3f));
+        }
+      }
+      return utf8;
+    }
+    return toUTF8Array(s);
+  };
+
+}();
+
+(function (factory) {
+  if (typeof define === 'function' && define.amd) {
+      define([], factory);
+  } else if (typeof exports === 'object') {
+      module.exports = factory();
+  }
+}(function () {
+    return qrcode;
+}));
+
+function qrSvg(text, cellSize, margin){
+  for(let type=1; type<=40; type++){
+    try{
+      const qr = qrcode(type, 'M');
+      qr.addData(text);
+      qr.make();
+      return qr.createSvgTag(cellSize, margin);
+    }catch(e){ /* try next size */ }
+  }
+  return '<div style="color:red;font-size:11px;">QR too long</div>';
+}
+
+/* ================= HOST VIEW ================= */
+
+function goHome(){
+  try{ window.close(); }catch(e){}
+  setTimeout(function(){
+    if(!window.closed){ window.location.href = 'music_bingo_caller.html'; }
+  }, 250);
+}
+
+function resetBaseUrl(){
+  document.getElementById('baseUrl').value = DEFAULT_BASE_URL;
+}
+
+function currentPool(){
+  return SONGS.filter(s => selectedDecades.has(s.d) && selectedGenres.has(s.g));
+}
+function updatePoolCount(){
+  document.getElementById('poolCount').textContent = `${currentPool().length} songs available`;
+}
+function syncAllBtn(){
+  document.getElementById('allBtn').classList.toggle('active', selectedDecades.size === ALL_DECADES.length);
+}
+function syncAllGenreBtn(){
+  document.getElementById('allGenreBtn').classList.toggle('active', selectedGenres.size === ALL_GENRES.length);
+}
+function toggleDecade(btn, decade){
+  if(selectedDecades.has(decade)){
+    if(selectedDecades.size === 1) return;
+    selectedDecades.delete(decade);
+    btn.classList.remove('active');
+  } else {
+    selectedDecades.add(decade);
+    btn.classList.add('active');
+  }
+  syncAllBtn();
+  updatePoolCount();
+}
+function selectAllDecades(){
+  selectedDecades = new Set(ALL_DECADES);
+  document.querySelectorAll('.decade-btn[data-decade]').forEach(b=>b.classList.add('active'));
+  syncAllBtn();
+  updatePoolCount();
+}
+function toggleGenre(btn, genre){
+  if(selectedGenres.has(genre)){
+    if(selectedGenres.size === 1) return;
+    selectedGenres.delete(genre);
+    btn.classList.remove('active');
+  } else {
+    selectedGenres.add(genre);
+    btn.classList.add('active');
+  }
+  syncAllGenreBtn();
+  updatePoolCount();
+}
+function selectAllGenres(){
+  selectedGenres = new Set(ALL_GENRES);
+  document.querySelectorAll('.decade-btn[data-genre]').forEach(b=>b.classList.add('active'));
+  syncAllGenreBtn();
+  updatePoolCount();
+}
+
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+
+function generateCards(){
+  const errBox = document.getElementById('errorMsg');
+  errBox.style.display = 'none';
+
+  let n = parseInt(document.getElementById('cardCount').value, 10);
+  if(!n || n<1) n = 1;
+  if(n>200) n = 200;
+
+  let rounds = parseInt(document.getElementById('roundCount').value, 10);
+  if(!rounds || rounds<1) rounds = 1;
+  if(rounds>15) rounds = 15;
+
+  const pool = currentPool();
+  if(pool.length < 24){
+    errBox.textContent = `Selected mix only has ${pool.length} songs — need at least 24 to fill a card. Turn on more decades or genres.`;
+    errBox.style.display = 'block';
+    return;
+  }
+
+  let baseUrl = document.getElementById('baseUrl').value.trim();
+  if(!baseUrl){
+    baseUrl = DEFAULT_BASE_URL;
+  }
+  // guarantee a scheme is present — without one, phone scanners treat the
+  // QR payload as plain text and offer a web search instead of opening it
+  if(!/^https?:\/\//i.test(baseUrl)){
+    baseUrl = 'https://' + baseUrl.replace(/^\/+/, '');
+  }
+  // guarantee the URL points at this actual page, not just the domain root
+  if(!/\.html?$/i.test(baseUrl)){
+    baseUrl = baseUrl.replace(/\/+$/, '') + '/music_bingo_digital_cards.html';
+  }
+  document.getElementById('baseUrl').value = baseUrl;
+
+  // build a lookup of song -> index in the master SONGS array
+  const indexOf = new Map();
+  SONGS.forEach((s,i)=> indexOf.set(s, i));
+
+  const qrGrid = document.getElementById('qrGrid');
+  const ticketSheet = document.getElementById('ticketSheet');
+  qrGrid.innerHTML = '';
+  ticketSheet.innerHTML = '';
+
+  for(let cardNum=1; cardNum<=n; cardNum++){
+    const roundsOfIndices = [];
+    for(let r=0; r<rounds; r++){
+      const picks = shuffle(pool).slice(0,24);
+      roundsOfIndices.push(picks.map(s => indexOf.get(s)));
+    }
+    const code = encodeCard(cardNum, roundsOfIndices);
+    const url = `${baseUrl}#c=${code}`;
+    const svg = qrSvg(url, 4, 2);
+
+    const tile = document.createElement('div');
+    tile.className = 'qr-tile';
+    tile.innerHTML = `
+      ${svg}
+      <div class="tile-num">Player #${String(cardNum).padStart(3,'0')} · ${rounds} round${rounds>1?'s':''}</div>
+      <a href="${url}" target="_blank" rel="noopener">${url}</a>
+    `;
+    qrGrid.appendChild(tile);
+
+    const ticket = document.createElement('div');
+    ticket.className = 'ticket';
+    ticket.innerHTML = `
+      ${qrSvg(url, 3, 2)}
+      <div class="t-title">Scan for your card!</div>
+      <div class="t-num">Player #${String(cardNum).padStart(3,'0')}</div>
+      <div class="t-sub">Spin the Decades Music Bingo</div>
+    `;
+    ticketSheet.appendChild(ticket);
+  }
+}
+
+/* ================= PLAYER VIEW ================= */
+
+let markedState = [];
+let cardData = null;      // decoded {n, r: [[24 idx],...]}
+let currentRoundIdx = 0;  // 0-based
+
+function renderRound(){
+  const totalRounds = cardData.r.length;
+  document.getElementById('roundLabel').textContent = `Round ${currentRoundIdx+1} of ${totalRounds}`;
+  document.getElementById('nextRoundBtn').style.display = (currentRoundIdx < totalRounds-1) ? 'inline-block' : 'none';
+
+  const indices = cardData.r[currentRoundIdx];
+  const songs = indices.map(idx => SONGS[idx]).filter(Boolean);
+  const cells = songs.slice(0,24);
+  cells.splice(12, 0, {free:true});
+
+  markedState = cells.map(c => !!c.free);
+
+  const grid = document.getElementById('playerGrid');
+  grid.innerHTML = cells.map((s,i)=>{
+    if(s.free){
+      return `<div class="p-cell free" data-i="${i}"><div class="p-title">FREE</div></div>`;
+    }
+    const cls = DECADE_CLASS[s.d] || '';
+    return `<div class="p-cell" data-i="${i}" onclick="toggleMark(${i})">
+      <span class="p-dot ${cls}"></span>
+      <div class="p-title">${s.t}</div>
+      <div class="p-artist">${s.a}</div>
+    </div>`;
+  }).join('');
+
+  document.getElementById('bingoBanner').style.display = 'none';
+  checkBingo();
+}
+
+function renderPlayerCard(code){
+  document.getElementById('hostView').style.display = 'none';
+  document.getElementById('playerView').style.display = 'block';
+
+  let data;
+  try{
+    data = decodeCard(code);
+    if(!data || !Array.isArray(data.r) || data.r.length < 1) throw new Error('bad payload');
+  }catch(e){
+    document.getElementById('playerGrid').innerHTML = '<p style="grid-column:1/-1;text-align:center;">This card link looks broken. Ask your host for a new QR code.</p>';
+    return;
+  }
+
+  cardData = data;
+  currentRoundIdx = 0;
+  document.getElementById('cardNumLabel').textContent = `Card #${String(data.n).padStart(3,'0')}`;
+  renderRound();
+}
+
+function nextRound(){
+  if(!cardData) return;
+  if(currentRoundIdx < cardData.r.length - 1){
+    currentRoundIdx += 1;
+    renderRound();
+  }
+}
+
+function toggleMark(i){
+  markedState[i] = !markedState[i];
+  const el = document.querySelector(`.p-cell[data-i="${i}"]`);
+  if(el) el.classList.toggle('marked', markedState[i]);
+  checkBingo();
+}
+
+function resetMarks(){
+  markedState = markedState.map((v,i)=> {
+    const el = document.querySelector(`.p-cell[data-i="${i}"]`);
+    const isFree = el && el.classList.contains('free');
+    if(el) el.classList.toggle('marked', isFree);
+    return isFree;
+  });
+  document.getElementById('bingoBanner').style.display = 'none';
+}
+
+function checkBingo(){
+  const lines = [];
+  for(let r=0;r<5;r++) lines.push([0,1,2,3,4].map(c=>r*5+c));
+  for(let c=0;c<5;c++) lines.push([0,1,2,3,4].map(r=>r*5+c));
+  lines.push([0,6,12,18,24]);
+  lines.push([4,8,12,16,20]);
+
+  const won = lines.some(line => line.every(idx => markedState[idx]));
+  document.getElementById('bingoBanner').style.display = won ? 'block' : 'none';
+}
+
+/* ================= INIT ================= */
+
+(function init(){
+  const hash = window.location.hash;
+  if(hash && hash.indexOf('c=') !== -1){
+    const code = hash.substring(hash.indexOf('c=') + 2);
+    renderPlayerCard(code);
+  } else {
+    document.getElementById('hostView').style.display = 'block';
+
+    document.getElementById('baseUrl').value = DEFAULT_BASE_URL;
+
+    const params = new URLSearchParams(window.location.search);
+    const playersParam = params.get('players');
+    if(playersParam && !isNaN(parseInt(playersParam,10))){
+      document.getElementById('cardCount').value = parseInt(playersParam,10);
+    }
+
+    updatePoolCount();
+    generateCards();
+  }
+})();
+</script>
+</body>
+</html>
